@@ -5,12 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Protokol 888</title>
         <style>
+            .main {
+                border: 1px solid white;
+                border-radius: 2%;
+                padding: 60px;
+                margin: 3px;
+            }
+        h2, h3 {
+            text-align: center;
+            color: white;
+            }
         body {
             color: white;
             font-weight: bold;
             font-family: Arial, sans-serif;
             max-width: 400px;
-            margin: 50px auto;
+            margin: 5px auto;
             padding: 20px;
             background-image: url('assets/hero-bg.jpg');
             background-size: cover;
@@ -18,12 +28,12 @@
             background-repeat: no-repeat;
             background-color: #f4f4f4; /* fallback */
         }
-        .form-group {
+        .form-group1, .form-group2, .form-group3, .form-group4, .form-group5, .form-group6, .form-group7, .form-group8 {
             margin-bottom: 15px;
         }
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
         input {
             width: 100%;
@@ -38,52 +48,188 @@
             background-color: #4CAF50;
             color: white;
             padding: 10px;
-            border: none;
             cursor: pointer;
-            width: 100%;
+            width: 75%;
+            margin: 5px 0;
+            font-weight: bold;
+            border-radius: 5%;
         }
         button:hover {
             background-color: #45a049;
         }
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        .form-group3, .form-group4 {
+            flex: 1;
+        }
+
     </style>
 </head>
 <body>
-    <h2>Card Payment Form</h2>
+    <div class="main">
+    <h2>Protokol 888</h2>
+    <p>Enter details below to process transaction:</p>
     <form id="creditCardForm">
-        <div class="form-group">
+        <div class="form-group1">
             <label for="cardName">Cardholder Name</label>
             <input type="text" id="cardName" name="cardName" required>
             <div class="error" id="nameError"></div>
         </div>
-        <div class="form-group">
+        <div class="form-group2">
             <label for="cardNumber">Card Number</label>
-            <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" required>
+            <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
             <div class="error" id="numberError"></div>
         </div>
-        <div class="form-group">
-            <label for="expiryDate">Expiration Date</label>
-            <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
-            <div class="error" id="expiryError"></div>
+        <div class="form-row">
+            <div class="form-group3">
+                <label for="expiryDate">Expiration Date</label>
+                <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
+                <div class="error" id="expiryError"></div>
+            </div>
+            <div class="form-group4">
+                <label for="cvv">CVV</label>
+                <input type="text" id="cvv" name="cvv" placeholder="123" maxlength="4">
+                <div class="error" id="cvvError"></div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="cvv">CVV</label>
-            <input type="text" id="cvv" name="cvv" placeholder="123" required>
-            <div class="error" id="cvvError"></div>
+
+        <div class="form-group8">
+            <label for="depositAmount">Deposit Amount (Fiat)</label>
+            <input type="number" id="depositAmount" name="depositAmount" min="0" step="any" placeholder="100" required>
+            <label for="depositCurrency">Deposit Currency</label>
+            <select id="depositCurrency" name="depositCurrency">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+            </select>
+            <div class="error" id="depositError"></div>
         </div>
-        <div class="form-group">
+
+        <button type="button" id="depositBtn">Deposit Fiat</button>
+
+        <div class="form-group6">
+            <h3>Fiat to Crypto Conversion</h3>
+            <label for="fiatAmount">Amount</label>
+            <input type="number" id="fiatAmount" name="fiatAmount" min="0" step="any" placeholder="100">
+
+            <label for="fiatCurrency">Fiat currency</label>
+            <select id="fiatCurrency" name="fiatCurrency">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+            </select>
+
+            <label for="cryptoCurrency">Convert to crypto</label>
+            <select id="cryptoCurrency" name="cryptoCurrency">
+                <option value="monero">Monero (XMR)</option>
+                <option value="btc">Bitcoin (BTC)</option>
+                <option value="eth">Ethereum (ETH)</option>
+                <option value="usdt">Tether (USDT)</option>
+            </select>
+
+            <p id="conversionResult">Enter amount and choose currencies to see conversion.</p>
+            <button type="button" id="convertBtn">Convert</button>
+        </div>
+
+        <div class="form-group7">
+            <h3>Fiat Deposit + Balance</h3>
+            <p id="fiatIngressDisplay">Fiat ingressed: 0</p>
+            <p id="fiatBalanceDisplay">Fiat balance: 0</p>
+            <p id="cryptoBalanceDisplay">Crypto balances: XMR 0, BTC 0, ETH 0, USDT 0</p>
+        </div>
+
+         <div class="form-group5">
             <label for="walletAddress">Crypto Wallet Address</label>
             <input type="text" id="walletAddress" name="walletAddress" placeholder="e.g., 0x123... or bc1..." required>
             <div class="error" id="walletError"></div>
         </div>
-        <button type="submit">Submit Payment</button>
+
+        <button type="submit">Send Crypto</button>
     </form>
+    </div>
 
     <script>
+        let fiatIngressTotal = 0;
+        let fiatBalance = 0;
+        let currentFiatCurrency = 'USD';
+        const cryptoBalances = { monero: 0, btc: 0, eth: 0, usdt: 0 };
+
+        function renderBalances() {
+            const fiatIngressDisplay = document.getElementById('fiatIngressDisplay');
+            const fiatBalanceDisplay = document.getElementById('fiatBalanceDisplay');
+            const cryptoBalanceDisplay = document.getElementById('cryptoBalanceDisplay');
+
+            fiatIngressDisplay.textContent = `Fiat ingressed: ${fiatIngressTotal.toFixed(2)} ${currentFiatCurrency}`;
+            fiatBalanceDisplay.textContent = `Fiat balance: ${fiatBalance.toFixed(2)} ${currentFiatCurrency}`;
+            cryptoBalanceDisplay.textContent = `Crypto balances: XMR ${cryptoBalances.monero.toFixed(6)}, BTC ${cryptoBalances.btc.toFixed(6)}, ETH ${cryptoBalances.eth.toFixed(6)}, USDT ${cryptoBalances.usdt.toFixed(6)}`;
+        }
+
         document.getElementById('creditCardForm').addEventListener('submit', function(e) {
             e.preventDefault();
             if (validateForm()) {
-                alert('Payment submitted successfully!');
+                const depositAmount = parseFloat(document.getElementById('depositAmount').value);
+                const depositCurrency = document.getElementById('depositCurrency').value;
+
+                if (!isNaN(depositAmount) && depositAmount > 0) {
+                    fiatIngressTotal += depositAmount;
+                    fiatBalance += depositAmount;
+                    currentFiatCurrency = depositCurrency;
+                }
+
+                renderBalances();
+                alert('Payment submitted successfully! Fiat amount ingressed and balance updated.');
                 // Here you would typically send the data to your server
+            }
+        });
+
+        document.getElementById('depositBtn').addEventListener('click', function() {
+            let isValid = true;
+
+            // Clear previous errors
+            document.querySelectorAll('.error').forEach(el => el.textContent = '');
+
+            // Validate name
+            const name = document.getElementById('cardName').value.trim();
+            if (name === '') {
+                document.getElementById('nameError').textContent = 'Name is required';
+                isValid = false;
+            }
+
+            // Validate card number
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            if (!isValidCardNumber(cardNumber)) {
+                document.getElementById('numberError').textContent = 'Invalid card number';
+                isValid = false;
+            }
+
+            // Validate expiry date
+            const expiry = document.getElementById('expiryDate').value;
+            if (!isValidExpiry(expiry)) {
+                document.getElementById('expiryError').textContent = 'Invalid expiry date';
+                isValid = false;
+            }
+
+            // Validate CVV
+            const cvv = document.getElementById('cvv').value;
+            if (!isValidCVV(cvv)) {
+                document.getElementById('cvvError').textContent = 'Invalid CVV';
+                isValid = false;
+            }
+
+            // Validate deposit amount
+            const depositAmount = parseFloat(document.getElementById('depositAmount').value);
+            if (isNaN(depositAmount) || depositAmount <= 0) {
+                document.getElementById('depositError').textContent = 'Please enter a positive deposit amount';
+                isValid = false;
+            }
+
+            if (isValid) {
+                const depositCurrency = document.getElementById('depositCurrency').value;
+                fiatIngressTotal += depositAmount;
+                fiatBalance += depositAmount;
+                currentFiatCurrency = depositCurrency;
+                renderBalances();
+                alert('Fiat deposited successfully! Balance updated.');
             }
         });
 
@@ -125,6 +271,13 @@
             const wallet = document.getElementById('walletAddress').value.trim();
             if (wallet === '') {
                 document.getElementById('walletError').textContent = 'Wallet address is required';
+                isValid = false;
+            }
+
+            // Validate deposit amount
+            const depositAmount = parseFloat(document.getElementById('depositAmount').value);
+            if (isNaN(depositAmount) || depositAmount <= 0) {
+                document.getElementById('depositError').textContent = 'Please enter a positive deposit amount';
                 isValid = false;
             }
 
@@ -186,6 +339,50 @@
             }
             e.target.value = value;
         });
+
+        const conversionRates = {
+            USD: { monero: 0.0045, btc: 0.000021, eth: 0.00033, usdt: 1 },
+            EUR: { monero: 0.0039, btc: 0.000019, eth: 0.00029, usdt: 1.06 }
+        };
+
+        function updateConversion() {
+            const amount = parseFloat(document.getElementById('fiatAmount').value);
+            const fiat = document.getElementById('fiatCurrency').value;
+            const crypto = document.getElementById('cryptoCurrency').value;
+            const output = document.getElementById('conversionResult');
+
+            if (isNaN(amount) || amount <= 0) {
+                output.textContent = 'Please enter a positive fiat amount.';
+                return;
+            }
+
+            if (amount > fiatBalance) {
+                output.textContent = 'Insufficient fiat balance. Please deposit first via card details form.';
+                return;
+            }
+
+            const rate = conversionRates[fiat] && conversionRates[fiat][crypto];
+            if (!rate) {
+                output.textContent = 'Rate unavailable for selected currencies.';
+                return;
+            }
+
+            const converted = amount * rate;
+            const symbol = crypto === 'btc' ? 'BTC' : crypto === 'eth' ? 'ETH' : crypto === 'usdt' ? 'USDT' : 'XMR';
+
+            fiatBalance -= amount;
+            cryptoBalances[crypto] += converted;
+            currentFiatCurrency = fiat;
+            renderBalances();
+
+            output.textContent = `${amount.toFixed(2)} ${fiat} converted to ${converted.toFixed(6)} ${symbol}.`;
+        }
+
+        document.getElementById('convertBtn').addEventListener('click', updateConversion);
+        document.getElementById('fiatCurrency').addEventListener('change', updateConversion);
+        document.getElementById('cryptoCurrency').addEventListener('change', updateConversion);
+
+        renderBalances();
     </script>
 </body>
 </html>
