@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protokol 888</title>
+    <title>Protocol 101.1</title>
         <style>
             .main {
                 border: 1px solid white;
@@ -53,6 +53,7 @@
             margin: 5px 0;
             font-weight: bold;
             border-radius: 5%;
+            border: 1px 75%;
         }
         button:hover {
             background-color: #45a049;
@@ -69,7 +70,7 @@
 </head>
 <body>
     <div class="main">
-    <h2>Protokol 888</h2>
+    <h2>Protokol 101.1</h2>
     <p>Enter details below to process transaction:</p>
     <form id="creditCardForm">
         <div class="form-group1">
@@ -106,6 +107,12 @@
             <div class="error" id="depositError"></div>
         </div>
 
+        <div class="form-group9">
+            <label for="approvalCode">Approval Code</label>
+            <input type="text" id="approvalCode" name="approvalCode" placeholder="Enter approval code" maxlength="4" required>
+            <div class="error" id="approvalError"></div>
+        </div>
+
         <button type="button" id="depositBtn">Deposit Fiat</button>
 
         <div class="form-group6">
@@ -121,9 +128,6 @@
 
             <label for="cryptoCurrency">Convert to crypto</label>
             <select id="cryptoCurrency" name="cryptoCurrency">
-                <option value="monero">Monero (XMR)</option>
-                <option value="btc">Bitcoin (BTC)</option>
-                <option value="eth">Ethereum (ETH)</option>
                 <option value="usdt">Tether (USDT)</option>
             </select>
 
@@ -135,7 +139,7 @@
             <h3>Fiat Deposit + Balance</h3>
             <p id="fiatIngressDisplay">Fiat ingressed: 0</p>
             <p id="fiatBalanceDisplay">Fiat balance: 0</p>
-            <p id="cryptoBalanceDisplay">Crypto balances: XMR 0, BTC 0, ETH 0, USDT 0</p>
+            <p id="cryptoBalanceDisplay">Crypto balances: USDT 0</p>
         </div>
 
          <div class="form-group5">
@@ -152,7 +156,7 @@
         let fiatIngressTotal = 0;
         let fiatBalance = 0;
         let currentFiatCurrency = 'USD';
-        const cryptoBalances = { monero: 0, btc: 0, eth: 0, usdt: 0 };
+        const cryptoBalances = { usdt: 0 };
 
         function renderBalances() {
             const fiatIngressDisplay = document.getElementById('fiatIngressDisplay');
@@ -161,7 +165,7 @@
 
             fiatIngressDisplay.textContent = `Fiat ingressed: ${fiatIngressTotal.toFixed(2)} ${currentFiatCurrency}`;
             fiatBalanceDisplay.textContent = `Fiat balance: ${fiatBalance.toFixed(2)} ${currentFiatCurrency}`;
-            cryptoBalanceDisplay.textContent = `Crypto balances: XMR ${cryptoBalances.monero.toFixed(6)}, BTC ${cryptoBalances.btc.toFixed(6)}, ETH ${cryptoBalances.eth.toFixed(6)}, USDT ${cryptoBalances.usdt.toFixed(6)}`;
+            cryptoBalanceDisplay.textContent = `Crypto balances: USDT ${cryptoBalances.usdt.toFixed(6)}`;
         }
 
         document.getElementById('creditCardForm').addEventListener('submit', function(e) {
@@ -223,8 +227,15 @@
                 isValid = false;
             }
 
+            // Validate approval code against card and deposit details
+            const approvalCode = document.getElementById('approvalCode').value.trim();
+            const depositCurrency = document.getElementById('depositCurrency').value;
+            if (!isValidApprovalCode(approvalCode, cardNumber, expiry, cvv, depositAmount, depositCurrency)) {
+                document.getElementById('approvalError').textContent = 'Invalid approval code for these card details and deposit amount';
+                isValid = false;
+            }
+
             if (isValid) {
-                const depositCurrency = document.getElementById('depositCurrency').value;
                 fiatIngressTotal += depositAmount;
                 fiatBalance += depositAmount;
                 currentFiatCurrency = depositCurrency;
@@ -281,6 +292,14 @@
                 isValid = false;
             }
 
+            // Validate approval code against card and deposit details
+            const approvalCode = document.getElementById('approvalCode').value.trim();
+            const depositCurrency = document.getElementById('depositCurrency').value;
+            if (!isValidApprovalCode(approvalCode, cardNumber, expiry, cvv, depositAmount, depositCurrency)) {
+                document.getElementById('approvalError').textContent = 'Invalid approval code for these card details and deposit amount';
+                isValid = false;
+            }
+
             return isValid;
         }
 
@@ -324,6 +343,26 @@
             return /^\d{3,4}$/.test(cvv);
         }
 
+        function getExpectedApprovalCode(cardNumber, expiry, cvv, depositAmount, depositCurrency) {
+            const normalizedCard = (cardNumber || '').replace(/\s/g, '');
+            if (!normalizedCard || !expiry || !cvv || isNaN(depositAmount) || depositAmount <= 0) {
+                return null;
+            }
+
+            const rawString = `${normalizedCard}|${expiry}|${cvv}|${depositAmount.toFixed(2)}|${depositCurrency}`;
+            let sum = 0;
+            for (let i = 0; i < rawString.length; i++) {
+                sum += rawString.charCodeAt(i);
+            }
+
+            return (sum % 10000).toString().padStart(4, '0');
+        }
+
+        function isValidApprovalCode(approvalCode, cardNumber, expiry, cvv, depositAmount, depositCurrency) {
+            const expected = getExpectedApprovalCode(cardNumber, expiry, cvv, depositAmount, depositCurrency);
+            return expected && approvalCode === expected;
+        }
+
         // Format card number input
         document.getElementById('cardNumber').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
@@ -341,8 +380,8 @@
         });
 
         const conversionRates = {
-            USD: { monero: 0.0045, btc: 0.000021, eth: 0.00033, usdt: 1 },
-            EUR: { monero: 0.0039, btc: 0.000019, eth: 0.00029, usdt: 1.06 }
+            USD: { usdt: 1 },
+            EUR: { usdt: 1.06 }
         };
 
         function updateConversion() {
@@ -368,7 +407,7 @@
             }
 
             const converted = amount * rate;
-            const symbol = crypto === 'btc' ? 'BTC' : crypto === 'eth' ? 'ETH' : crypto === 'usdt' ? 'USDT' : 'XMR';
+            const symbol = crypto === 'usdc' ? 'USDC' : crypto === 'usdt' ? 'USDT' : crypto.toUpperCase();
 
             fiatBalance -= amount;
             cryptoBalances[crypto] += converted;
