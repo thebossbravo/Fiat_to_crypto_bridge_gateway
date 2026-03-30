@@ -1,7 +1,6 @@
 import * as React from "react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
@@ -14,105 +13,105 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ComputerTerminalIcon, RoboticIcon, BookOpen02Icon, Settings05Icon, ChartRingIcon, SentIcon, CropIcon, PieChartIcon, MapsIcon, CommandIcon } from "@hugeicons/core-free-icons"
+import { ComputerTerminalIcon, RoboticIcon, BookOpen02Icon, Settings05Icon, ChartRingIcon, SentIcon } from "@hugeicons/core-free-icons"
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "Bridge User",
+    email: "user@bridge.com",
+    avatar: "/avatars/bridge.jpg",
   },
   navMain: [
     {
-      title: "Playground",
-      url: "#",
+      title: "Dashboard",
+      url: "/dashboard",
       icon: (
         <HugeiconsIcon icon={ComputerTerminalIcon} strokeWidth={2} />
       ),
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Overview",
+          url: "/dashboard",
         },
         {
-          title: "Starred",
-          url: "#",
+          title: "Transactions",
+          url: "/dashboard/transactions",
         },
         {
-          title: "Settings",
-          url: "#",
+          title: "Wallet",
+          url: "/dashboard/wallet",
         },
       ],
     },
     {
-      title: "Models",
-      url: "#",
+      title: "Bridge",
+      url: "/bridge",
       icon: (
         <HugeiconsIcon icon={RoboticIcon} strokeWidth={2} />
       ),
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "New Payment",
+          url: "/dashboard",
         },
         {
-          title: "Explorer",
-          url: "#",
+          title: "History",
+          url: "/dashboard/history",
         },
         {
-          title: "Quantum",
-          url: "#",
+          title: "Analytics",
+          url: "/dashboard/analytics",
         },
       ],
     },
     {
       title: "Documentation",
-      url: "#",
+      url: "/docs",
       icon: (
         <HugeiconsIcon icon={BookOpen02Icon} strokeWidth={2} />
       ),
       items: [
         {
-          title: "Introduction",
-          url: "#",
+          title: "Getting Started",
+          url: "/docs/getting-started",
         },
         {
-          title: "Get Started",
-          url: "#",
+          title: "API Reference",
+          url: "/docs/api",
         },
         {
           title: "Tutorials",
-          url: "#",
+          url: "/docs/tutorials",
         },
         {
-          title: "Changelog",
-          url: "#",
+          title: "FAQ",
+          url: "/docs/faq",
         },
       ],
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/settings",
       icon: (
         <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />
       ),
       items: [
         {
-          title: "General",
-          url: "#",
+          title: "Profile",
+          url: "/settings/profile",
         },
         {
-          title: "Team",
-          url: "#",
+          title: "Security",
+          url: "/settings/security",
+        },
+        {
+          title: "Preferences",
+          url: "/settings/preferences",
         },
         {
           title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
+          url: "/settings/billing",
         },
       ],
     },
@@ -133,29 +132,7 @@ const data = {
       ),
     },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: (
-        <HugeiconsIcon icon={CropIcon} strokeWidth={2} />
-      ),
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: (
-        <HugeiconsIcon icon={PieChartIcon} strokeWidth={2} />
-      ),
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: (
-        <HugeiconsIcon icon={MapsIcon} strokeWidth={2} />
-      ),
-    },
-  ],
+
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -165,13 +142,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <HugeiconsIcon icon={CommandIcon} strokeWidth={2} className="size-4" />
+              <a href="/dashboard">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-[#FF4500] text-white">
+                  <div className="w-4 h-4 bg-black rounded-sm rotate-45"></div>
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                  <span className="truncate font-medium text-white">Bridge</span>
+                  <span className="truncate text-xs text-zinc-400">Protocol</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -180,7 +157,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
