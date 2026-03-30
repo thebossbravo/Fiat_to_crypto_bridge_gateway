@@ -13,7 +13,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { NavMain } from '../nav-main';
+import { AppSidebar } from '../app-sidebar';
 import { PaymentDialog } from './PaymentDialog';
 
 interface Transaction {
@@ -39,16 +39,6 @@ interface DashboardProps {
 
 export function Dashboard({ walletAddress, balance, transactions, loading, user, onLogout }: DashboardProps) {
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
-
-  // Navigation items for the new NavMain component
-  const navItems = [
-    {
-      title: 'Dashboard',
-      url: '#dashboard',
-      icon: <Wallet className="w-4 h-4" />,
-      isActive: true,
-    },
-  ];
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -81,45 +71,10 @@ export function Dashboard({ walletAddress, balance, transactions, loading, user,
   return (
     <SidebarProvider>
       <div className="flex h-screen bg-black text-white">
-        <Sidebar className="bg-black border-r border-white/10 h-full" side="left">
-          <SidebarHeader className="p-6 border-b border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-[#FF4500] rounded-lg rotate-45 flex items-center justify-center">
-                <div className="w-4 h-4 bg-black rounded-sm -rotate-45"></div>
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-white font-manrope">Bridge</h2>
-                <p className="text-xs text-zinc-400">Protocol</p>
-              </div>
-            </div>
-          </SidebarHeader>
-          <SidebarContent className="p-4">
-            <NavMain items={navItems} />
-          </SidebarContent>
-          <SidebarFooter className="p-4 border-t border-white/10">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
-                  <span className="text-xs text-white font-medium">
-                    {user?.email?.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white font-medium truncate">{user?.email}</p>
-                  <p className="text-xs text-zinc-400">Account</p>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onLogout}
-                className="w-full text-zinc-400 hover:text-white hover:bg-white/5 transition-colors justify-start"
-              >
-                Sign Out
-              </Button>
-            </div>
-          </SidebarFooter>
-        </Sidebar>
+        <AppSidebar className="bg-black border-r border-white/10 h-full" side="left" />
+        <div className="absolute top-4 left-4 z-50">
+          <SidebarTrigger className="bg-white/10 hover:bg-white/20 text-white border border-white/20" />
+        </div>
 
         <main className="flex-1 overflow-auto">
           <div className="p-6">
