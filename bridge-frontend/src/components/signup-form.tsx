@@ -56,7 +56,7 @@ export function SignupForm({
             />
           </Field>
           <Field>
-            <Button type="submit" className="w-full">Create Account</Button>
+            <Button type="submit" className="w-full bg-[#FF4500] hover:bg-[#FF6B35] text-white">Create Account</Button>
           </Field>
           <FieldSeparator>Or</FieldSeparator>
           <Field className="grid gap-4 sm:grid-cols-2">

@@ -56,7 +56,7 @@ export function LoginForm({
             />
           </Field>
           <Field>
-            <Button type="submit" className="w-full">Sign In</Button>
+            <Button type="submit" className="w-full bg-[#FF4500] hover:bg-[#FF6B35] text-white">Sign In</Button>
           </Field>
           <FieldSeparator>Or</FieldSeparator>
           <Field className="grid gap-4 sm:grid-cols-2">

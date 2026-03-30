@@ -42,7 +42,7 @@ export function PaymentForm({ onSuccess, onError }: PaymentFormProps) {
   const presetAmounts = [10, 25, 50, 100, 250, 500];
 
   return (
-    <Card className="bg-zinc-900 border-zinc-800">
+    <Card className="bg-black/60 backdrop-blur-xl border-white/10">
       <CardHeader>
         <CardTitle className="text-white flex items-center gap-2">
           <CreditCard className="w-5 h-5" />
@@ -64,16 +64,16 @@ export function PaymentForm({ onSuccess, onError }: PaymentFormProps) {
                 placeholder="Enter amount"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
+                className="bg-black/40 border-white/20 text-white placeholder:text-zinc-500 backdrop-blur-sm"
                 min="10"
                 step="0.01"
                 required
               />
               <Select value={currency} onValueChange={setCurrency}>
-                <SelectTrigger className="w-24 bg-zinc-800 border-zinc-700 text-white">
+                <SelectTrigger className="w-24 bg-black/40 border-white/20 text-white backdrop-blur-sm">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-800 border-zinc-700">
+                <SelectContent className="bg-black/80 border-white/20 backdrop-blur-sm">
                   <SelectItem value="USD">USD</SelectItem>
                   <SelectItem value="EUR">EUR</SelectItem>
                 </SelectContent>
@@ -88,7 +88,7 @@ export function PaymentForm({ onSuccess, onError }: PaymentFormProps) {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                  className="border-white/20 text-zinc-300 hover:bg-white/5 backdrop-blur-sm"
                   onClick={() => setAmount(preset.toString())}
                 >
                   ${preset}
@@ -98,7 +98,7 @@ export function PaymentForm({ onSuccess, onError }: PaymentFormProps) {
           </div>
 
           {/* Fee Information */}
-          <div className="bg-zinc-800/50 rounded-lg p-4 space-y-2">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-2 backdrop-blur-sm">
             <div className="flex justify-between text-sm">
               <span className="text-zinc-400">Processing Fee</span>
               <span className="text-white">2.9% + $0.30</span>
@@ -109,7 +109,7 @@ export function PaymentForm({ onSuccess, onError }: PaymentFormProps) {
             </div>
             <div className="flex justify-between text-sm font-medium">
               <span className="text-white">Total Fee</span>
-              <span className="text-orange-400">
+              <span className="text-[#FF4500]">
                 {amount ? `$${(parseFloat(amount) * 0.029 + 0.30 + 2.00).toFixed(2)}` : '$0.00'}
               </span>
             </div>
@@ -120,7 +120,7 @@ export function PaymentForm({ onSuccess, onError }: PaymentFormProps) {
             <div className="text-sm text-zinc-400">
               You'll receive approximately
             </div>
-            <Badge variant="secondary" className="bg-zinc-800 text-zinc-300">
+            <Badge variant="secondary" className="bg-white/10 text-white border-white/20">
               {amount ? `${(parseFloat(amount) * 0.99).toFixed(2)} USDC` : '0.00 USDC'}
             </Badge>
           </div>
