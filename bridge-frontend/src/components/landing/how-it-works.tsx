@@ -12,7 +12,6 @@ export default function HowItWorksSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {/* Step 1 */}
           <div className="relative group">
             <div className="bg-[#111] border border-white/10 rounded-3xl p-8 md:p-12 aspect-[4/5] flex flex-col justify-between shadow-2xl group cursor-pointer hover:border-[#FF4500]/50 transition-all duration-500">
               <div className="flex justify-between items-start">
@@ -36,7 +35,6 @@ export default function HowItWorksSection() {
             </div>
           </div>
 
-          {/* Step 2 - Offset */}
           <div className="relative group md:mt-24">
             <div className="bg-[#FF4500] rounded-3xl p-8 md:p-12 aspect-[4/5] flex flex-col justify-between shadow-2xl hover:shadow-[0_20px_50px_rgba(255,69,0,0.3)] transition-all duration-500 group cursor-pointer">
               <div className="flex justify-between items-start">
@@ -60,7 +58,6 @@ export default function HowItWorksSection() {
             </div>
           </div>
 
-          {/* Step 3 */}
           <div className="relative group">
             <div className="bg-[#111] border border-white/10 rounded-3xl p-8 md:p-12 aspect-[4/5] flex flex-col justify-between shadow-2xl group cursor-pointer hover:border-[#FF4500]/50 transition-all duration-500">
               <div className="flex justify-between items-start">
@@ -85,7 +82,7 @@ export default function HowItWorksSection() {
           </div>
         </div>
         
-        {/* Background Pattern */}
+
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] opacity-10 pointer-events-none"
              style={{ backgroundImage: 'radial-gradient(circle, #333 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
         </div>

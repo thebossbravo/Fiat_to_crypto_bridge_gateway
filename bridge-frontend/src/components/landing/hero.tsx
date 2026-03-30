@@ -1,45 +1,65 @@
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
 export default function HeroSection() {
   return (
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20 bg-[#050505]">
-      
-        <div className="absolute inset-0 z-0 pointer-events-none select-none">
-          <div className="absolute top-0 left-0 w-full h-full opacity-60 mix-blend-screen">
-            <img src="https://framerusercontent.com/images/9zvwRJAavKKacVyhFCwHyXW1U.png?width=1536&height=1024" alt="Atmosphere" className="w-full h-full object-cover object-center opacity-80" />
+      <section className="min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-6 relative z-10">
+
+        <div className="text-center max-w-5xl mx-auto relative z-10">
+          <Badge variant="secondary" className="bg-white/5 border-white/10 backdrop-blur-md mb-8 animate-fade-up px-4 py-1.5" style={{animationDelay: '0.1s'}}>
+            <span className="relative flex h-2 w-2 mr-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF4500]"></span>
+            </span>
+            <span className="text-xs font-medium text-orange-100/90 tracking-wide font-manrope">
+              Bridge Protocol 2.0 is now live
+            </span>
+            <span className="w-3 h-3 text-orange-400 ml-2">→</span>
+          </Badge>
+
+          <h1 className="text-6xl md:text-8xl font-semibold tracking-tighter font-manrope leading-[1.1] mb-8 animate-fade-up" style={{animationDelay: '0.2s'}}>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">Bridge Intelligence</span>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">
+              for the <span className="text-[#FF4500] inline-block relative">
+                Future
+                <svg className="absolute w-full h-3 -bottom-2 left-0 text-[#FF4500] opacity-60" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
+                </svg>
+              </span>
+            </span>
+          </h1>
+
+          <p className="text-xl md:text-2xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-up" style={{animationDelay: '0.3s'}}>
+            Bridge blends advanced financial technology with instant crypto conversion to move money across borders 10x faster.
+          </p>
+
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 animate-fade-up" style={{animationDelay: '0.4s'}}>
+            <Button className="shiny-cta group">
+              <span className="relative z-10 flex items-center gap-2 text-white font-medium">
+                Start Bridging <span>→</span>
+              </span>
+            </Button>
+            
+            <Button variant="outline" className="bg-zinc-900 border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-800">
+              <span className="mr-2">⚡</span>
+              View Demo
+            </Button>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050505] z-10"></div>
         </div>
 
-       <div className="container mx-auto px-6 relative z-20 text-center flex flex-col items-center justify-center h-full">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-medium leading-[1.1] tracking-tight mb-6 text-[#ffe0e0] mix-blend-overlay" 
-                style={{ fontFamily: "'Playfair Display', serif", textShadow: '0 0 12px rgba(255,255,255,0.71)' }}>
-              Bridge. <br />
-              <span className="italic font-light text-[#ffe0e0]">The crypto bridge.</span>
-            </h1>
-            
-            <p className="text-base md:text-lg text-[#ffe0e0]/90 max-w-lg mx-auto mb-16 font-light tracking-wide leading-relaxed mix-blend-overlay"
-               style={{ textShadow: '0 0 12px rgba(255,255,255,0.71)' }}>
-              We turn fiat into crypto instantly. A bridge protocol for those who dare to move money across borders.
-            </p>
-
-            <div className="flex flex-col items-center gap-6">
-              <div className="relative group cursor-pointer">
-                <div className="absolute inset-0 bg-[#FF4500]/20 blur-xl rounded-full opacity-0 group-hover:opacity-50 transition-opacity duration-500"></div>
-                <div className="relative border border-white/20 bg-white/5 backdrop-blur-sm px-6 py-2 rounded-full flex items-center gap-3 text-xs md:text-sm text-white/80 uppercase tracking-widest hover:bg-white/10 transition-colors duration-300">
-                  <span>Start Bridging</span>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-4 text-[10px] md:text-xs text-white/40 uppercase tracking-widest mt-8 font-mono">
-                <span>11:11 PM</span>
-                <span className="w-px h-3 bg-white/20"></span>
-                <span>GLOBAL</span>
-              </div>
+        <div className="w-full mt-32 border-y border-white/5 bg-white/[0.02] backdrop-blur-sm py-10 opacity-60 hover:opacity-100 transition-opacity">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-8 md:gap-16">
+            <p className="text-sm font-bold tracking-widest text-zinc-500 uppercase shrink-0">Integrated with:</p>
+            <div className="flex flex-wrap justify-center gap-8 md:gap-16 items-center w-full">
+              <div className="flex items-center gap-2 font-semibold font-manrope"><div className="w-6 h-6 bg-white/20 rounded-full"></div>VISA</div>
+              <div className="flex items-center gap-2 font-semibold font-manrope"><div className="w-6 h-6 bg-white/20 rounded-full"></div>MASTERCARD</div>
+              <div className="flex items-center gap-2 font-semibold font-manrope"><div className="w-6 h-6 bg-white/20 rounded-full"></div>BITCOIN</div>
+              <div className="flex items-center gap-2 font-semibold font-manrope"><div className="w-6 h-6 bg-white/20 rounded-full"></div>ETHEREUM</div>
             </div>
           </div>
         </div>
-      </section>
 
+      </section>
   );
 }

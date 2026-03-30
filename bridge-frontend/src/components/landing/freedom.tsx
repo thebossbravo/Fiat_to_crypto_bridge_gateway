@@ -4,12 +4,14 @@ export default function FreedomSection() {
 
       <section className="py-40 relative overflow-hidden">
         <div className="container mx-auto px-6 relative z-10">
-          <div className="mb-32">
-            <h2 className="text-5xl md:text-7xl text-center" 
+           <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl leading-tight text-white/90 mb-12" 
                 style={{ fontFamily: "'Playfair Display', serif" }}>
-              Define your <br />
-              <span className="italic">financial freedom</span>
+              We bridge the gap where your money truly flows.
             </h2>
+            <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-light">
+              Speed is refusal. We remove the delays so your transactions move with absolute clarity.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
