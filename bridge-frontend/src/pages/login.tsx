@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { LoginForm } from '../components/login-form';
 import { SignupForm } from '../components/signup-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,20 +10,34 @@ type AuthMode = 'login' | 'signup';
 
 export default function LoginPage() {
   const [mode, setMode] = useState<AuthMode>('login');
+  const navigate = useNavigate();
 
-  const handleLogin = (email: string, password: string) => {
-    // TODO: Implement login logic
-    console.log('Login:', { email, password });
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      // TODO: Implement login API call
+      console.log('Login:', { email, password });
+      // Navigate to dashboard on successful login
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
-  const handleSignup = (email: string, password: string) => {
-    // TODO: Implement signup logic
-    console.log('Signup:', { email, password });
+  const handleSignup = async (email: string, password: string) => {
+    try {
+      // TODO: Implement signup API call
+      console.log('Signup:', { email, password });
+      // Navigate to dashboard on successful signup
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Signup failed:', error);
+    }
   };
 
   const handleGoogleLogin = () => {
     // TODO: Implement Google OAuth
     console.log('Google login');
+    navigate('/dashboard');
   };
 
   return (
@@ -51,15 +66,27 @@ export default function LoginPage() {
               />
             )}
             
-            <div className="mt-6 text-center">
-              <Button
-                variant="ghost"
-                className="text-zinc-400 hover:text-white"
-                onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                {mode === 'login' ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
-              </Button>
+            <div className="mt-6 space-y-4">
+              <div className="text-center">
+                <Button
+                  variant="ghost"
+                  className="text-zinc-400 hover:text-white"
+                  onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  {mode === 'login' ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+                </Button>
+              </div>
+              <div className="text-center">
+                <Button
+                  variant="ghost"
+                  className="text-zinc-400 hover:text-white"
+                  onClick={() => navigate('/')}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Home
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
