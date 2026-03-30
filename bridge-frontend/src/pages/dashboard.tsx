@@ -1,31 +1,27 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router'
 import { Dashboard } from "../components/dashboard/Dashboard";
 import { PaymentForm } from "../components/payment/PaymentForm";
-import { AuthButton } from "../components/auth/AuthButton";
 import { useTransactions, useWallet } from "../hooks/useTransactions";
 
 type DashboardPage = 'overview' | 'payment';
 
 export default function DashboardPage() {
   const [currentPage, setCurrentPage] = useState<DashboardPage>('overview');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<{ email: string; walletAddress: string } | undefined>();
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // Assume authenticated for demo
+  const [user, setUser] = useState<{ email: string; walletAddress: string } | undefined>({
+    email: 'user@example.com',
+    walletAddress: '0x1234567890123456789012345678901234567890'
+  });
+  const navigate = useNavigate();
 
   const { data: transactionsData, isLoading: transactionsLoading } = useTransactions();
   const { data: walletData, isLoading: walletLoading } = useWallet();
 
-  const handleLogin = async () => {
-    // Simulate OAuth flow
-    setIsAuthenticated(true);
-    setUser({
-      email: 'user@example.com',
-      walletAddress: '0x1234567890123456789012345678901234567890'
-    });
-  };
-
   const handleLogout = async () => {
     setIsAuthenticated(false);
     setUser(undefined);
+    navigate('/login');
   };
 
   const handlePaymentSuccess = (transactionId: string) => {
@@ -84,12 +80,16 @@ export default function DashboardPage() {
                   </button>
                 </nav>
                 <div className="mt-8">
-                  <AuthButton
-                    onLogin={handleLogin}
-                    onLogout={handleLogout}
-                    isAuthenticated={isAuthenticated}
-                    user={user}
-                  />
+                  <div className="bg-zinc-800 rounded-lg p-4">
+                    <div className="text-sm text-zinc-400 mb-2">Logged in as:</div>
+                    <div className="text-white font-medium mb-3">{user?.email}</div>
+                    <button
+                      onClick={handleLogout}
+                      className="text-sm text-zinc-400 hover:text-white transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
                 </div>
               </aside>
               <main className="flex-1">
