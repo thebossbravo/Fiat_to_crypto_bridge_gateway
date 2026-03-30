@@ -30,7 +30,7 @@ interface Transaction {
   blockchain_tx_hash: string | null;
 }
 
-interface NewDashboardProps {
+interface DashboardProps {
   walletAddress: string;
   balance: string;
   transactions: Transaction[];
@@ -42,7 +42,7 @@ interface NewDashboardProps {
   onLogout: () => void;
 }
 
-export function NewDashboard({ walletAddress, balance, transactions, loading, user, onLogout }: NewDashboardProps) {
+export function Dashboard({ walletAddress, balance, transactions, loading, user, onLogout }: DashboardProps) {
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
   const copyToClipboard = (text: string) => {
@@ -226,7 +226,6 @@ export function NewDashboard({ walletAddress, balance, transactions, loading, us
           </div>
         </main>
 
-        {/* Payment Dialog */}
         <PaymentDialog 
           open={isPaymentDialogOpen}
           onOpenChange={setIsPaymentDialogOpen}
