@@ -57,7 +57,7 @@ export function Dashboard({ walletAddress, balance, transactions, loading }: Das
           <p className="text-zinc-400">Manage your bridge transactions and wallet</p>
         </div>
 
-        <Card className="bg-zinc-900 border-zinc-800 mb-8">
+        <Card className="bg-black/60 backdrop-blur-xl border-white/10 mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-white">
               <Wallet className="w-5 h-5" />
@@ -77,13 +77,13 @@ export function Dashboard({ walletAddress, balance, transactions, loading }: Das
               </div>
               <div className="text-right">
                 <p className="text-sm text-zinc-400 mb-1">Balance</p>
-                <p className="text-2xl font-bold text-white">{balance} USDC</p>
+                <p className="text-2xl font-bold text-[#FF4500]">{balance} USDC</p>
               </div>
             </div>
-            <Separator className="my-4 bg-zinc-800" />
+            <Separator className="my-4 bg-white/10" />
             <Button 
               variant="outline" 
-              className="w-full border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+              className="w-full border-white/20 text-zinc-300 hover:bg-white/5"
               onClick={() => copyToClipboard(walletAddress)}
             >
               <Copy className="w-4 h-4 mr-2" />
@@ -92,7 +92,7 @@ export function Dashboard({ walletAddress, balance, transactions, loading }: Das
           </CardContent>
         </Card>
 
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="bg-black/60 backdrop-blur-xl border-white/10">
           <CardHeader>
             <CardTitle className="text-white">Transaction History</CardTitle>
             <CardDescription className="text-zinc-400">
@@ -111,7 +111,7 @@ export function Dashboard({ walletAddress, balance, transactions, loading }: Das
             ) : (
               <div className="space-y-4">
                 {transactions.map((tx) => (
-                  <div key={tx.id} className="flex items-center justify-between p-4 bg-zinc-800/50 rounded-lg">
+                  <div key={tx.id} className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-lg backdrop-blur-sm">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-medium text-white">
