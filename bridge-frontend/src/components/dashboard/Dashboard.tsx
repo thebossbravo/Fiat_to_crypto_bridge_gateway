@@ -9,16 +9,11 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { NavMain } from '../nav-main';
 import { PaymentDialog } from './PaymentDialog';
 
 interface Transaction {
@@ -44,6 +39,16 @@ interface DashboardProps {
 
 export function Dashboard({ walletAddress, balance, transactions, loading, user, onLogout }: DashboardProps) {
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+
+  // Navigation items for the new NavMain component
+  const navItems = [
+    {
+      title: 'Dashboard',
+      url: '#dashboard',
+      icon: <Wallet className="w-4 h-4" />,
+      isActive: true,
+    },
+  ];
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -76,37 +81,39 @@ export function Dashboard({ walletAddress, balance, transactions, loading, user,
   return (
     <SidebarProvider>
       <div className="flex h-screen bg-black text-white">
-        <Sidebar className="bg-black/60 backdrop-blur-xl border-r border-white/10">
-          <SidebarHeader className="p-6">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 bg-[#FF4500] rounded-sm rotate-45"></div>
-              <span className="text-xl font-bold tracking-tight font-manrope">Bridge Protocol</span>
+        <Sidebar className="bg-black border-r border-white/10 h-full" side="left">
+          <SidebarHeader className="p-6 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-[#FF4500] rounded-lg rotate-45 flex items-center justify-center">
+                <div className="w-4 h-4 bg-black rounded-sm -rotate-45"></div>
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-white font-manrope">Bridge</h2>
+                <p className="text-xs text-zinc-400">Protocol</p>
+              </div>
             </div>
           </SidebarHeader>
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton className="bg-white/10 border border-white/20 text-white font-medium">
-                      <Wallet className="w-4 h-4" />
-                      Dashboard
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+          <SidebarContent className="p-4">
+            <NavMain items={navItems} />
           </SidebarContent>
-          <SidebarFooter className="p-4">
-            <div className="bg-white/5 border border-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-sm text-zinc-400 mb-2">Logged in as:</div>
-              <div className="text-white font-medium mb-3 text-sm">{user?.email}</div>
+          <SidebarFooter className="p-4 border-t border-white/10">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                  <span className="text-xs text-white font-medium">
+                    {user?.email?.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-white font-medium truncate">{user?.email}</p>
+                  <p className="text-xs text-zinc-400">Account</p>
+                </div>
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onLogout}
-                className="text-sm text-zinc-400 hover:text-white w-full"
+                className="w-full text-zinc-400 hover:text-white hover:bg-white/5 transition-colors justify-start"
               >
                 Sign Out
               </Button>
@@ -122,6 +129,7 @@ export function Dashboard({ walletAddress, balance, transactions, loading, user,
                 <p className="text-zinc-400">Manage your bridge transactions and wallet</p>
               </div>
               <div className="flex items-center gap-4">
+                
                 <Button 
                   onClick={() => setIsPaymentDialogOpen(true)}
                   className="bg-[#FF4500] hover:bg-[#FF6B35] text-white"
@@ -129,7 +137,7 @@ export function Dashboard({ walletAddress, balance, transactions, loading, user,
                   <Plus className="w-4 h-4 mr-2" />
                   New Payment
                 </Button>
-                <SidebarTrigger />
+              
               </div>
             </div>
 
