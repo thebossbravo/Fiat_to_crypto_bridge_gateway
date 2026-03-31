@@ -1,0 +1,205 @@
+import { useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { MetricsCards } from '@/components/analytics/MetricsCards'
+import { VolumeChart } from '@/components/analytics/VolumeChart'
+import { CurrencyDistribution } from '@/components/analytics/CurrencyDistribution'
+import { DateRangePicker } from '@/components/analytics/DateRangePicker'
+import { format, subDays } from 'date-fns'
+import { useMetrics, useVolumeData } from '@/hooks/useAnalyticsQuery'
+import { usePeriodComparison } from '@/hooks/usePeriodComparison'
+import { useTheme } from '@/contexts/theme-context'
+
+
+
+export default function AnalyticsPage() {
+  const { theme } = useTheme()
+  const [period, setPeriod] = useState('weekly')
+  const [dateRange, setDateRange] = useState({
+    startDate: format(subDays(new Date(), 30), 'yyyy-MM-dd'),
+    endDate: format(new Date(), 'yyyy-MM-dd')
+  })
+  const [chartType, setChartType] = useState<'bar' | 'line'>('bar')
+
+  // Use TanStack Query for API calls
+  const request = {
+    period: period as 'daily' | 'weekly' | 'monthly',
+    start_date: dateRange.startDate,
+    end_date: dateRange.endDate,
+  }
+
+  const { data: metrics, isLoading: metricsLoading } = useMetrics(request)
+  const { data: volumeData, isLoading: volumeLoading } = useVolumeData(request)
+  
+  // Mock currency data
+  const currencyData = [
+    { name: 'USD', value: 65, color: '#FF4500' },
+    { name: 'EUR', value: 35, color: '#3B82F6' },
+  ]
+  
+  const loading = metricsLoading || volumeLoading
+
+  // Period-over-period comparison
+  const { comparison } = usePeriodComparison(period as 'daily' | 'weekly' | 'monthly')
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Analytics Dashboard</h1>
+          <p className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-700'}>Monitor your bridge protocol performance</p>
+        </div>
+          <div className="flex gap-2">
+            <Select value={period} onValueChange={setPeriod}>
+              <SelectTrigger className={`w-[180px] ${theme === 'dark' ? '' : 'text-gray-700 border-gray-300'}`}>
+                <SelectValue placeholder="Select period" />
+              </SelectTrigger>
+              <SelectContent className={theme === 'dark' ? 'bg-black/80 border-white/20' : 'bg-white border-gray-200'}>
+                <SelectItem value="daily">Daily</SelectItem>
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+              </SelectContent>
+            </Select>
+            <DateRangePicker onDateRangeChange={(start, end) => setDateRange({ startDate: start, endDate: end })} />
+          </div>
+        </div>
+
+      <MetricsCards 
+        data={{
+          totalVolume: parseFloat(metrics?.metrics?.total_volume || '0'),
+          totalFees: parseFloat(metrics?.metrics?.total_fees || '0'),
+          successRate: parseFloat(metrics?.metrics?.success_rate || '0'),
+          averageTransaction: parseFloat(metrics?.metrics?.average_transaction || '0'),
+          volumeChange: comparison?.volumeChange || 0,
+          feesChange: comparison?.feesChange || 0,
+          successRateChange: comparison?.successRateChange || 0,
+          avgTransactionChange: comparison?.avgTransactionChange || 0,
+        }} 
+        loading={loading} 
+      />
+
+      <Tabs defaultValue="volume" className="space-y-4">
+        <TabsList className={theme === 'dark' ? 'bg-black/60 border-white/10' : 'bg-gray-100 border-gray-200'}>
+          <TabsTrigger value="volume" className={theme === 'dark' ? 'data-[state=active]:bg-white/10 data-[state=active]:text-white' : 'data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-gray-300'}>Volume Analysis</TabsTrigger>
+          <TabsTrigger value="currency" className={theme === 'dark' ? 'data-[state=active]:bg-white/10 data-[state=active]:text-white' : 'data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-gray-300'}>Currency Breakdown</TabsTrigger>
+          <TabsTrigger value="performance" className={theme === 'dark' ? 'data-[state=active]:bg-white/10 data-[state=active]:text-white' : 'data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-gray-300'}>Performance Metrics</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="volume" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <VolumeChart 
+              data={volumeData || []} 
+              loading={loading}
+              chartType={chartType}
+              onChartTypeChange={setChartType}
+            />
+            <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
+              <CardHeader>
+                <CardTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Transaction Count</CardTitle>
+                <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Number of transactions per day</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {(volumeData || []).slice(0, 5).map((item: any, index: number) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <span className={`text-sm ${theme === 'dark' ? 'text-zinc-300' : 'text-gray-700'}`}>{format(new Date(item.date), 'MMM dd, yyyy')}</span>
+                      <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{item.transactions} transactions</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="currency" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <CurrencyDistribution data={currencyData || []} loading={loading} />
+            <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
+              <CardHeader>
+                <CardTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Currency Statistics</CardTitle>
+                <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Detailed breakdown by currency</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {(currencyData || []).map((currency: { name: string; value: number; color: string }) => (
+                    <div key={currency.name} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-3 h-3 rounded-full" 
+                          style={{ backgroundColor: currency.color }}
+                        />
+                        <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{currency.name}</span>
+                      </div>
+                      <span className={`text-sm ${theme === 'dark' ? 'text-zinc-300' : 'text-gray-700'}`}>{currency.value}%</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="performance" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-3">
+            <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
+              <CardHeader>
+                <CardTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Success Rate</CardTitle>
+                <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Transaction success percentage</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>{parseFloat(metrics?.metrics?.success_rate || '0').toFixed(1)}%</div>
+                <p className={`text-sm ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'} mt-2`}>
+                  {comparison?.successRateChange && comparison.successRateChange !== 0 ? (
+                    <span className={comparison.successRateChange > 0 ? (theme === 'dark' ? 'text-green-400' : 'text-green-600') : (theme === 'dark' ? 'text-red-400' : 'text-red-600')}>
+                      {comparison.successRateChange > 0 ? '+' : ''}{comparison.successRateChange.toFixed(1)}% from last period
+                    </span>
+                  ) : (
+                    <span>No change from last period</span>
+                  )}
+                </p>
+              </CardContent>
+            </Card>
+            <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
+              <CardHeader>
+                <CardTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Average Transaction</CardTitle>
+                <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Mean transaction value</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>${parseFloat(metrics?.metrics?.average_transaction || '0').toFixed(2)}</div>
+                <p className={`text-sm ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'} mt-2`}>
+                  {comparison?.avgTransactionChange && comparison.avgTransactionChange !== 0 ? (
+                    <span className={comparison.avgTransactionChange > 0 ? (theme === 'dark' ? 'text-green-400' : 'text-green-600') : (theme === 'dark' ? 'text-red-400' : 'text-red-600')}>
+                      {comparison.avgTransactionChange > 0 ? '+' : ''}{comparison.avgTransactionChange.toFixed(1)}% from last period
+                    </span>
+                  ) : (
+                    <span>No change from last period</span>
+                  )}
+                </p>
+              </CardContent>
+            </Card>
+            <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
+              <CardHeader>
+                <CardTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Total Fees</CardTitle>
+                <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Fees collected</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>${parseFloat(metrics?.metrics?.total_fees || '0').toFixed(2)}</div>
+                <p className={`text-sm ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'} mt-2`}>
+                  {comparison?.feesChange && comparison.feesChange !== 0 ? (
+                    <span className={comparison.feesChange > 0 ? (theme === 'dark' ? 'text-green-400' : 'text-green-600') : (theme === 'dark' ? 'text-red-400' : 'text-red-600')}>
+                      {comparison.feesChange > 0 ? '+' : ''}{comparison.feesChange.toFixed(1)}% from last period
+                    </span>
+                  ) : (
+                    <span>No change from last period</span>
+                  )}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
