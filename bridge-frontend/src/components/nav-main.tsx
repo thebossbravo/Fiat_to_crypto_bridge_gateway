@@ -1,3 +1,4 @@
+import { Link, useLocation } from 'react-router'
 import {
   Collapsible,
   CollapsibleContent,
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/sidebar"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { cn } from "@/lib/utils"
 
 export function NavMain({
   items,
@@ -31,6 +33,8 @@ export function NavMain({
     }[]
   }[]
 }) {
+  const location = useLocation()
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -39,10 +43,15 @@ export function NavMain({
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip={item.title}>
-                <a href={item.url}>
+                <Link 
+                  to={item.url}
+                  className={cn(
+                    location.pathname === item.url ? "bg-sidebar-accent" : ""
+                  )}
+                >
                   {item.icon}
                   <span>{item.title}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
               {item.items?.length ? (
                 <>
@@ -57,9 +66,14 @@ export function NavMain({
                       {item.items?.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <a href={subItem.url}>
+                            <Link 
+                              to={subItem.url}
+                              className={cn(
+                                location.pathname === subItem.url ? "bg-sidebar-accent" : ""
+                              )}
+                            >
                               <span>{subItem.title}</span>
-                            </a>
+                            </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
