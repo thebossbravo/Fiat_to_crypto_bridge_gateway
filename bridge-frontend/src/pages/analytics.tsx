@@ -138,10 +138,10 @@ export default function AnalyticsPage() {
                 <CardDescription>Transaction success percentage</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-green-600">{parseFloat(metrics?.metrics?.success_rate || '0').toFixed(1)}%</div>
+                <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>{parseFloat(metrics?.metrics?.success_rate || '0').toFixed(1)}%</div>
                 <p className="text-sm text-muted-foreground mt-2">
                   {comparison?.successRateChange && comparison.successRateChange !== 0 ? (
-                    <span className={comparison.successRateChange > 0 ? 'text-green-600' : 'text-red-600'}>
+                    <span className={comparison.successRateChange > 0 ? (theme === 'dark' ? 'text-green-400' : 'text-green-600') : (theme === 'dark' ? 'text-red-400' : 'text-red-600')}>
                       {comparison.successRateChange > 0 ? '+' : ''}{comparison.successRateChange.toFixed(1)}% from last period
                     </span>
                   ) : (
@@ -156,10 +156,10 @@ export default function AnalyticsPage() {
                 <CardDescription>Mean transaction value</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">${parseFloat(metrics?.metrics?.average_transaction || '0').toFixed(2)}</div>
-                <p className="text-sm text-muted-foreground mt-2">
+                <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>${parseFloat(metrics?.metrics?.average_transaction || '0').toFixed(2)}</div>
+                <p className={`text-sm ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'} mt-2`}>
                   {comparison?.avgTransactionChange && comparison.avgTransactionChange !== 0 ? (
-                    <span className={comparison.avgTransactionChange > 0 ? 'text-green-600' : 'text-red-600'}>
+                    <span className={comparison.avgTransactionChange > 0 ? (theme === 'dark' ? 'text-green-400' : 'text-green-600') : (theme === 'dark' ? 'text-red-400' : 'text-red-600')}>
                       {comparison.avgTransactionChange > 0 ? '+' : ''}{comparison.avgTransactionChange.toFixed(1)}% from last period
                     </span>
                   ) : (
@@ -174,10 +174,10 @@ export default function AnalyticsPage() {
                 <CardDescription>Fees collected</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-orange-600">${parseFloat(metrics?.metrics?.total_fees || '0').toFixed(2)}</div>
-                <p className="text-sm text-muted-foreground mt-2">
+                <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>${parseFloat(metrics?.metrics?.total_fees || '0').toFixed(2)}</div>
+                <p className={`text-sm ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'} mt-2`}>
                   {comparison?.feesChange && comparison.feesChange !== 0 ? (
-                    <span className={comparison.feesChange > 0 ? 'text-green-600' : 'text-red-600'}>
+                    <span className={comparison.feesChange > 0 ? (theme === 'dark' ? 'text-green-400' : 'text-green-600') : (theme === 'dark' ? 'text-red-400' : 'text-red-600')}>
                       {comparison.feesChange > 0 ? '+' : ''}{comparison.feesChange.toFixed(1)}% from last period
                     </span>
                   ) : (
