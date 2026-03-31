@@ -146,7 +146,7 @@ export default function ReconciliationPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Reconciliation</h1>
-          <p className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Match expected vs actual transaction amounts</p>
+          <p className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-700'}>Match expected vs actual transaction amounts</p>
         </div>
         <Button variant="outline">
           <FileText className="w-4 h-4 mr-2" />
