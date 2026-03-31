@@ -13,6 +13,11 @@ import (
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Throttle(100)) // rate limit: max 100 concurrent requests
+	r.Use(SecurityHeaders)
 
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
@@ -23,8 +28,33 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}))
 
 	r.Get("/", s.HelloWorldHandler)
-
 	r.Get("/health", s.healthHandler)
+
+	r.Route("/api", func(api chi.Router) {
+		// Public auth routes (no JWT required)
+		s.authService.RegisterRoutes(api)
+
+		// Protected routes (JWT required)
+		api.Group(func(protected chi.Router) {
+			protected.Use(s.authService.JWTMiddleware)
+
+			protected.Get("/wallet", s.handleGetWallet)
+			protected.Get("/transactions", s.handleGetTransactions)
+			protected.Post("/payments/init", s.handlePaymentInit)
+
+			// Analytics and reconciliation endpoints
+			protected.Post("/reconcile", s.handleReconcileTransaction)
+			protected.Post("/metrics", s.handleGetMetrics)
+			protected.Get("/exchange-rates", s.handleExchangeRates)
+			protected.Post("/convert", s.handleCurrencyConversion)
+		})
+
+		// Webhook routes (signature-verified, no JWT)
+		api.Route("/webhooks", func(wh chi.Router) {
+			wh.Post("/blockradar", s.webhookHandler.HandleBlockradarWebhook)
+			wh.Post("/stripe", s.webhookHandler.HandleStripeWebhook)
+		})
+	})
 
 	return r
 }

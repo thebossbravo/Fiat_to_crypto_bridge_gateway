@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -22,10 +23,20 @@ type Service interface {
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
+
+	// GetDB returns the underlying *sql.DB for direct access.
+	GetDB() *sql.DB
+
+	// GetPool returns the pgxpool.Pool for sqlc generated queries.
+	GetPool() *pgxpool.Pool
+
+	// RunMigrations runs database migrations.
+	RunMigrations(migrationsDir string) error
 }
 
 type service struct {
-	db *sql.DB
+	db   *sql.DB
+	pool *pgxpool.Pool
 }
 
 var (
@@ -48,8 +59,16 @@ func New() Service {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Create pgxpool for sqlc queries
+	pool, err := pgxpool.New(context.Background(), connStr)
+	if err != nil {
+		log.Fatalf("Unable to create pgxpool: %v", err)
+	}
+
 	dbInstance = &service{
-		db: db,
+		db:   db,
+		pool: pool,
 	}
 	return dbInstance
 }
@@ -111,5 +130,43 @@ func (s *service) Health() map[string]string {
 // If an error occurs while closing the connection, it returns the error.
 func (s *service) Close() error {
 	log.Printf("Disconnected from database: %s", database)
+	s.pool.Close()
 	return s.db.Close()
+}
+
+// GetPool returns the pgxpool.Pool for sqlc generated queries.
+func (s *service) GetPool() *pgxpool.Pool {
+	return s.pool
+}
+
+// GetDB returns the underlying *sql.DB instance.
+func (s *service) GetDB() *sql.DB {
+	return s.db
+}
+
+// RunMigrations reads and executes SQL migration files from the given directory.
+func (s *service) RunMigrations(migrationsDir string) error {
+	entries, err := os.ReadDir(migrationsDir)
+	if err != nil {
+		return fmt.Errorf("failed to read migrations directory %s: %w", migrationsDir, err)
+	}
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		filePath := migrationsDir + "/" + entry.Name()
+		sqlBytes, err := os.ReadFile(filePath)
+		if err != nil {
+			return fmt.Errorf("failed to read migration file %s: %w", filePath, err)
+		}
+
+		_, err = s.db.Exec(string(sqlBytes))
+		if err != nil {
+			return fmt.Errorf("failed to execute migration %s: %w", entry.Name(), err)
+		}
+		log.Printf("Applied migration: %s", entry.Name())
+	}
+
+	return nil
 }
