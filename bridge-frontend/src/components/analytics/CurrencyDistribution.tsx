@@ -1,3 +1,4 @@
+import { useTheme } from '@/contexts/theme-context'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 
@@ -11,6 +12,7 @@ interface CurrencyDistributionProps {
 }
 
 export function CurrencyDistribution({ data, loading }: CurrencyDistributionProps) {
+  const { theme } = useTheme()
   if (loading) {
     return (
       <Card>
@@ -29,7 +31,7 @@ export function CurrencyDistribution({ data, loading }: CurrencyDistributionProp
     if (active && payload && payload.length) {
       const data = payload[0]
       return (
-        <div className="bg-background border rounded-lg shadow-lg p-3">
+        <div className={`border rounded-lg shadow-lg p-3 ${theme === 'dark' ? 'bg-black/90 text-white border-white/10' : 'bg-white text-gray-900 border-gray-200'}`}>
           <p className="font-medium">{data.name}</p>
           <p className="text-sm">{`${data.value}% of transactions`}</p>
         </div>
@@ -50,7 +52,7 @@ export function CurrencyDistribution({ data, loading }: CurrencyDistributionProp
       <text 
         x={x} 
         y={y} 
-        fill="white" 
+        fill={theme === 'dark' ? 'white' : 'white'} 
         textAnchor={x > cx ? 'start' : 'end'} 
         dominantBaseline="central"
         className="text-xs font-medium"

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTheme } from '@/contexts/theme-context';
 import { useCreateTransaction } from '@/hooks/useTransactions';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ interface PaymentDialogProps {
 }
 
 export function PaymentDialog({ open, onOpenChange, onSuccess, onError }: PaymentDialogProps) {
+  const { theme } = useTheme();
   const [amount, setAmount] = useState('');
   const [currency, setCurrency] = useState('USD');
   const [isLoading, setIsLoading] = useState(false);
@@ -47,21 +49,20 @@ export function PaymentDialog({ open, onOpenChange, onSuccess, onError }: Paymen
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-black/90 backdrop-blur-xl border-white/10 text-white max-w-md">
+      <DialogContent className={`${theme === 'dark' ? 'bg-black/90 backdrop-blur-xl border-white/10 text-white' : 'bg-white border-gray-200 text-gray-900'} max-w-md`}>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-white">
+          <DialogTitle className={`flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             <CreditCard className="w-5 h-5" />
             Bridge Payment
           </DialogTitle>
-          <DialogDescription className="text-zinc-400">
+          <DialogDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>
             Convert fiat to USDC on Base network
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Amount Selection */}
           <div className="space-y-3">
-            <Label htmlFor="amount" className="text-white">Amount</Label>
+            <Label htmlFor="amount" className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Amount</Label>
             <div className="flex gap-2">
               <Input
                 id="amount"
@@ -69,16 +70,16 @@ export function PaymentDialog({ open, onOpenChange, onSuccess, onError }: Paymen
                 placeholder="Enter amount"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="bg-black/40 border-white/20 text-white placeholder:text-zinc-500 backdrop-blur-sm"
+                className={theme === 'dark' ? 'bg-black/40 border-white/20 text-white placeholder:text-zinc-500 backdrop-blur-sm' : 'bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-500'}
                 min="10"
                 step="0.01"
                 required
               />
               <Select value={currency} onValueChange={setCurrency}>
-                <SelectTrigger className="w-24 bg-black/40 border-white/20 text-white backdrop-blur-sm">
+                <SelectTrigger className={`w-24 ${theme === 'dark' ? 'bg-black/40 border-white/20 text-white backdrop-blur-sm' : 'bg-gray-50 border-gray-300 text-gray-900'}`}>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-black/80 border-white/20 backdrop-blur-sm">
+                <SelectContent className={theme === 'dark' ? 'bg-black/80 border-white/20 backdrop-blur-sm' : 'bg-white border-gray-200'}>
                   <SelectItem value="USD">USD</SelectItem>
                   <SelectItem value="EUR">EUR</SelectItem>
                 </SelectContent>
@@ -93,7 +94,7 @@ export function PaymentDialog({ open, onOpenChange, onSuccess, onError }: Paymen
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="border-white/20 text-zinc-300 hover:bg-white/5 backdrop-blur-sm"
+                  className={theme === 'dark' ? 'border-white/20 text-zinc-300 hover:bg-white/5 backdrop-blur-sm' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}
                   onClick={() => setAmount(preset.toString())}
                 >
                   ${preset}
@@ -102,35 +103,32 @@ export function PaymentDialog({ open, onOpenChange, onSuccess, onError }: Paymen
             </div>
           </div>
 
-          {/* Fee Information */}
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-2 backdrop-blur-sm">
+          <div className={`${theme === 'dark' ? 'bg-white/5 border border-white/10' : 'bg-gray-50 border-gray-200'} rounded-lg p-4 space-y-2 backdrop-blur-sm`}>
             <div className="flex justify-between text-sm">
-              <span className="text-zinc-400">Processing Fee</span>
-              <span className="text-white">2.9% + $0.30</span>
+              <span className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Processing Fee</span>
+              <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>2.9% + $0.30</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-zinc-400">Network Fee</span>
-              <span className="text-white">~$2.00</span>
+              <span className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Network Fee</span>
+              <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>~$2.00</span>
             </div>
             <div className="flex justify-between text-sm font-medium">
-              <span className="text-white">Total Fee</span>
+              <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Total Fee</span>
               <span className="text-[#FF4500]">
                 {amount ? `$${(parseFloat(amount) * 0.029 + 0.30 + 2.00).toFixed(2)}` : '$0.00'}
               </span>
             </div>
           </div>
 
-          {/* Exchange Rate Info */}
           <div className="flex items-center justify-between">
-            <div className="text-sm text-zinc-400">
+            <div className={`text-sm ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}`}>
               You'll receive approximately
             </div>
-            <Badge variant="secondary" className="bg-white/10 text-white border-white/20">
+            <Badge variant="secondary" className={theme === 'dark' ? 'bg-white/10 text-white border-white/20' : 'bg-gray-100 text-gray-800 border-gray-200'}>
               {amount ? `${(parseFloat(amount) * 0.99).toFixed(2)} USDC` : '0.00 USDC'}
             </Badge>
           </div>
 
-          {/* Submit Button */}
           <Button 
             type="submit" 
             className="w-full bg-[#FF4500] hover:bg-[#FF6B35] text-white"
@@ -146,8 +144,7 @@ export function PaymentDialog({ open, onOpenChange, onSuccess, onError }: Paymen
             )}
           </Button>
 
-          {/* Security Notice */}
-          <div className="text-xs text-zinc-500 text-center">
+          <div className={`text-xs ${theme === 'dark' ? 'text-zinc-500' : 'text-gray-500'} text-center`}>
             <p>Secured by Stripe • PCI DSS Compliant</p>
             <p className="mt-1">Funds converted to USDC on Base network</p>
           </div>

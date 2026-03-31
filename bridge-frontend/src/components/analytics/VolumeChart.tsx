@@ -1,3 +1,4 @@
+import { useTheme } from '@/contexts/theme-context'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
@@ -14,6 +15,7 @@ interface VolumeChartProps {
 }
 
 export function VolumeChart({ data, loading, chartType = 'bar', onChartTypeChange }: VolumeChartProps) {
+  const { theme } = useTheme()
   if (loading) {
     return (
       <Card>
@@ -36,7 +38,7 @@ export function VolumeChart({ data, loading, chartType = 'bar', onChartTypeChang
   const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-background border rounded-lg shadow-lg p-3">
+        <div className={`border rounded-lg shadow-lg p-3 ${theme === 'dark' ? 'bg-black/90 text-white border-white/10' : 'bg-white text-gray-900 border-gray-200'}`}>
           <p className="font-medium">Date: {label ? formatDate(label) : 'N/A'}</p>
           {payload.map((entry: any, index: number) => (
             <p key={index} className="text-sm" style={{ color: entry.color }}>
@@ -61,22 +63,22 @@ export function VolumeChart({ data, loading, chartType = 'bar', onChartTypeChang
     if (chartType === 'line') {
       return (
         <LineChart {...commonProps}>
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#374151' : '#E5E7EB'} />
           <XAxis 
             dataKey="date" 
             tickFormatter={formatDate}
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 12, fill: theme === 'dark' ? '#9CA3AF' : '#6B7280' }}
           />
           <YAxis 
             yAxisId="volume"
             orientation="left"
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 12, fill: theme === 'dark' ? '#9CA3AF' : '#6B7280' }}
             tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
           />
           <YAxis 
             yAxisId="transactions"
             orientation="right"
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 12, fill: theme === 'dark' ? '#9CA3AF' : '#6B7280' }}
           />
           <Tooltip content={<CustomTooltip />} />
           <Line 
@@ -103,14 +105,14 @@ export function VolumeChart({ data, loading, chartType = 'bar', onChartTypeChang
 
     return (
       <BarChart {...commonProps}>
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#374151' : '#E5E7EB'} />
         <XAxis 
           dataKey="date" 
           tickFormatter={formatDate}
-          tick={{ fontSize: 12 }}
+          tick={{ fontSize: 12, fill: theme === 'dark' ? '#9CA3AF' : '#6B7280' }}
         />
         <YAxis 
-          tick={{ fontSize: 12 }}
+          tick={{ fontSize: 12, fill: theme === 'dark' ? '#9CA3AF' : '#6B7280' }}
           tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
         />
         <Tooltip content={<CustomTooltip />} />
@@ -123,15 +125,15 @@ export function VolumeChart({ data, loading, chartType = 'bar', onChartTypeChang
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div>
-          <CardTitle>Transaction Volume</CardTitle>
-          <CardDescription>Daily transaction volume over time</CardDescription>
+          <CardTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Transaction Volume</CardTitle>
+          <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Daily transaction volume over time</CardDescription>
         </div>
         {onChartTypeChange && (
           <Select value={chartType} onValueChange={onChartTypeChange}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className={`w-[120px] ${theme === 'dark' ? '' : 'text-gray-700 border-gray-300'}`}>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className={theme === 'dark' ? 'bg-black/80 border-white/20' : 'bg-white border-gray-200'}>
               <SelectItem value="bar">Bar Chart</SelectItem>
               <SelectItem value="line">Line Chart</SelectItem>
             </SelectContent>

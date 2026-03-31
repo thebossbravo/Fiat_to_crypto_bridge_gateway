@@ -52,10 +52,10 @@ export default function AnalyticsPage() {
         </div>
           <div className="flex gap-2">
             <Select value={period} onValueChange={setPeriod}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className={`w-[180px] ${theme === 'dark' ? '' : 'text-gray-700 border-gray-300'}`}>
                 <SelectValue placeholder="Select period" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={theme === 'dark' ? 'bg-black/80 border-white/20' : 'bg-white border-gray-200'}>
                 <SelectItem value="daily">Daily</SelectItem>
                 <SelectItem value="weekly">Weekly</SelectItem>
                 <SelectItem value="monthly">Monthly</SelectItem>

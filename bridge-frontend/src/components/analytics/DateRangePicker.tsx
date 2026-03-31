@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTheme } from '@/contexts/theme-context'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -11,6 +12,7 @@ interface DateRangePickerProps {
 }
 
 export function DateRangePicker({ onDateRangeChange, defaultRange = '30d' }: DateRangePickerProps) {
+  const { theme } = useTheme()
   const [range, setRange] = useState(defaultRange)
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
@@ -59,23 +61,22 @@ export function DateRangePicker({ onDateRangeChange, defaultRange = '30d' }: Dat
           variant={range === r.value ? 'default' : 'outline'}
           size="sm"
           onClick={() => handleRangeChange(r.value)}
-          className={range === r.value ? 'bg-[#FF4500] hover:bg-[#FF6B35]' : ''}
+          className={range === r.value ? 'bg-[#FF4500] hover:bg-[#FF6B35]' : theme === 'dark' ? '' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}
         >
           {r.label}
         </Button>
       ))}
       
-      {/* Custom Date Range */}
       {range === 'custom' && (
         <>
           <Popover open={isStartOpen} onOpenChange={setIsStartOpen}>
             <PopoverTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className={theme === 'dark' ? '' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}>
                 <CalendarIcon className="w-4 h-4 mr-2" />
                 {startDate ? format(startDate, 'MMM dd, yyyy') : 'Start Date'}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className={`w-auto p-0 ${theme === 'dark' ? 'bg-black/90 border-white/10' : 'bg-white border-gray-200'}`} align="start">
               <Calendar
                 mode="single"
                 selected={startDate}
@@ -96,12 +97,12 @@ export function DateRangePicker({ onDateRangeChange, defaultRange = '30d' }: Dat
           
           <Popover open={isEndOpen} onOpenChange={setIsEndOpen}>
             <PopoverTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className={theme === 'dark' ? '' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}>
                 <CalendarIcon className="w-4 h-4 mr-2" />
                 {endDate ? format(endDate, 'MMM dd, yyyy') : 'End Date'}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className={`w-auto p-0 ${theme === 'dark' ? 'bg-black/90 border-white/10' : 'bg-white border-gray-200'}`} align="start">
               <Calendar
                 mode="single"
                 selected={endDate}
