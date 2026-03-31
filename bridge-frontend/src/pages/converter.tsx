@@ -15,11 +15,6 @@ interface ConversionResult {
   rate: string
 }
 
-interface ExchangeRates {
-  USD_EUR: { rate: string; updated_at: string }
-  EUR_USD: { rate: string; updated_at: string }
-}
-
 export default function ConverterPage() {
   const { theme } = useTheme()
   const [conversionResult, setConversionResult] = useState<ConversionResult>()
