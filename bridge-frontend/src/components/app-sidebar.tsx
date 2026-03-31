@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ComputerTerminalIcon, RoboticIcon, BookOpen02Icon, Settings05Icon, ChartRingIcon, SentIcon, Calculator01Icon, AnalyticsIcon } from "@hugeicons/core-free-icons"
+import { ComputerTerminalIcon, RoboticIcon, Settings05Icon, ChartRingIcon, SentIcon, Calculator01Icon, AnalyticsIcon } from "@hugeicons/core-free-icons"
 
 const data = {
   user: {
