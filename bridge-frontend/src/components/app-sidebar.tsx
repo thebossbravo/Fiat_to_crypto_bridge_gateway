@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ComputerTerminalIcon, RoboticIcon, BookOpen02Icon, Settings05Icon, ChartRingIcon, SentIcon } from "@hugeicons/core-free-icons"
+import { ComputerTerminalIcon, RoboticIcon, BookOpen02Icon, Settings05Icon, ChartRingIcon, SentIcon, Calculator01Icon, AnalyticsIcon } from "@hugeicons/core-free-icons"
 
 const data = {
   user: {
@@ -34,59 +34,60 @@ const data = {
           title: "Overview",
           url: "/dashboard",
         },
+      ],
+    },
+    {
+      title: "Analytics",
+      url: "/dashboard/analytics",
+      icon: (
+        <HugeiconsIcon icon={AnalyticsIcon} strokeWidth={2} />
+      ),
+      items: [
         {
-          title: "Transactions",
-          url: "/dashboard/transactions",
+          title: "Analytics Dashboard",
+          url: "/dashboard/analytics",
         },
         {
-          title: "Wallet",
-          url: "/dashboard/wallet",
+          title: "Volume Analysis",
+          url: "/dashboard/analytics/volume",
+        },
+        {
+          title: "Performance Metrics",
+          url: "/dashboard/analytics/performance",
         },
       ],
     },
     {
-      title: "Bridge",
+      title: "Tools",
+      url: "/dashboard/tools",
+      icon: (
+        <HugeiconsIcon icon={Calculator01Icon} strokeWidth={2} />
+      ),
+      items: [
+        {
+          title: "Currency Converter",
+          url: "/dashboard/converter",
+        },
+        {
+          title: "Reconciliation",
+          url: "/dashboard/reconciliation",
+        },
+      ],
+    },
+    {
+      title: "Bridge Operations",
       url: "/bridge",
       icon: (
         <HugeiconsIcon icon={RoboticIcon} strokeWidth={2} />
       ),
       items: [
         {
-          title: "New Payment",
+          title: "New Transaction",
           url: "/dashboard",
         },
         {
-          title: "History",
+          title: "Transaction History",
           url: "/dashboard/history",
-        },
-        {
-          title: "Analytics",
-          url: "/dashboard/analytics",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "/docs",
-      icon: (
-        <HugeiconsIcon icon={BookOpen02Icon} strokeWidth={2} />
-      ),
-      items: [
-        {
-          title: "Getting Started",
-          url: "/docs/getting-started",
-        },
-        {
-          title: "API Reference",
-          url: "/docs/api",
-        },
-        {
-          title: "Tutorials",
-          url: "/docs/tutorials",
-        },
-        {
-          title: "FAQ",
-          url: "/docs/faq",
         },
       ],
     },
