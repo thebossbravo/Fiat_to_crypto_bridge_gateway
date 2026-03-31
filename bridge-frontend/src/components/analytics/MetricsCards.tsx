@@ -24,7 +24,7 @@ export function MetricsCards({ data, loading }: MetricsCardsProps) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <Card key={i}>
+          <Card key={i} className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <div className="h-4 w-20 bg-muted rounded animate-pulse" />
               <div className="h-4 w-4 bg-muted rounded animate-pulse" />
@@ -66,7 +66,7 @@ export function MetricsCards({ data, loading }: MetricsCardsProps) {
       : value.toLocaleString()
 
     return (
-      <Card>
+      <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{title}</CardTitle>
           <Icon className={`h-4 w-4 ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}`} />

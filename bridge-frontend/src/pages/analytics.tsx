@@ -80,10 +80,10 @@ export default function AnalyticsPage() {
       />
 
       <Tabs defaultValue="volume" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="volume">Volume Analysis</TabsTrigger>
-          <TabsTrigger value="currency">Currency Breakdown</TabsTrigger>
-          <TabsTrigger value="performance">Performance Metrics</TabsTrigger>
+        <TabsList className={theme === 'dark' ? 'bg-black/60 border-white/10' : 'bg-gray-100 border-gray-200'}>
+          <TabsTrigger value="volume" className={theme === 'dark' ? 'data-[state=active]:bg-white/10 data-[state=active]:text-white' : 'data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-gray-300'}>Volume Analysis</TabsTrigger>
+          <TabsTrigger value="currency" className={theme === 'dark' ? 'data-[state=active]:bg-white/10 data-[state=active]:text-white' : 'data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-gray-300'}>Currency Breakdown</TabsTrigger>
+          <TabsTrigger value="performance" className={theme === 'dark' ? 'data-[state=active]:bg-white/10 data-[state=active]:text-white' : 'data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-gray-300'}>Performance Metrics</TabsTrigger>
         </TabsList>
 
         <TabsContent value="volume" className="space-y-6">
@@ -94,10 +94,10 @@ export default function AnalyticsPage() {
               chartType={chartType}
               onChartTypeChange={setChartType}
             />
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
               <CardHeader>
-                <CardTitle>Transaction Count</CardTitle>
-                <CardDescription>Number of transactions per day</CardDescription>
+                <CardTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Transaction Count</CardTitle>
+                <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Number of transactions per day</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -116,10 +116,10 @@ export default function AnalyticsPage() {
         <TabsContent value="currency" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <CurrencyDistribution data={currencyData || []} loading={loading} />
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
               <CardHeader>
-                <CardTitle>Currency Statistics</CardTitle>
-                <CardDescription>Detailed breakdown by currency</CardDescription>
+                <CardTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Currency Statistics</CardTitle>
+                <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Detailed breakdown by currency</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -143,14 +143,14 @@ export default function AnalyticsPage() {
 
         <TabsContent value="performance" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-3">
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
               <CardHeader>
-                <CardTitle>Success Rate</CardTitle>
-                <CardDescription>Transaction success percentage</CardDescription>
+                <CardTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Success Rate</CardTitle>
+                <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Transaction success percentage</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>{parseFloat(metrics?.metrics?.success_rate || '0').toFixed(1)}%</div>
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className={`text-sm ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'} mt-2`}>
                   {comparison?.successRateChange && comparison.successRateChange !== 0 ? (
                     <span className={comparison.successRateChange > 0 ? (theme === 'dark' ? 'text-green-400' : 'text-green-600') : (theme === 'dark' ? 'text-red-400' : 'text-red-600')}>
                       {comparison.successRateChange > 0 ? '+' : ''}{comparison.successRateChange.toFixed(1)}% from last period
@@ -161,10 +161,10 @@ export default function AnalyticsPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
               <CardHeader>
-                <CardTitle>Average Transaction</CardTitle>
-                <CardDescription>Mean transaction value</CardDescription>
+                <CardTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Average Transaction</CardTitle>
+                <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Mean transaction value</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>${parseFloat(metrics?.metrics?.average_transaction || '0').toFixed(2)}</div>
@@ -179,10 +179,10 @@ export default function AnalyticsPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10' : 'bg-white border-gray-200 shadow-sm'}>
               <CardHeader>
-                <CardTitle>Total Fees</CardTitle>
-                <CardDescription>Fees collected</CardDescription>
+                <CardTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Total Fees</CardTitle>
+                <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Fees collected</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>${parseFloat(metrics?.metrics?.total_fees || '0').toFixed(2)}</div>
