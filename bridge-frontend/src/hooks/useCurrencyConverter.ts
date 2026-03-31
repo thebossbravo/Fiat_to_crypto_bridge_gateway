@@ -1,8 +1,36 @@
-import { useState, useEffect } from 'react'
+import { useQuery, useMutation } from '@tanstack/react-query'
+import axios from 'axios'
+
+// API base URL
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+
+// Axios instance with auth
+const api = axios.create({
+  baseURL: API_URL,
+})
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+interface ExchangeRate {
+  rate: string
+  updated_at: string
+}
 
 interface ExchangeRates {
-  USD_EUR: { rate: string; updated_at: string }
-  EUR_USD: { rate: string; updated_at: string }
+  USD_EUR: ExchangeRate
+  EUR_USD: ExchangeRate
+}
+
+interface ConversionRequest {
+  amount: string
+  from_currency: string
+  to_currency: string
 }
 
 interface ConversionResult {
@@ -13,66 +41,39 @@ interface ConversionResult {
   rate: string
 }
 
+export function useExchangeRates() {
+  return useQuery({
+    queryKey: ['exchange-rates'],
+    queryFn: async () => {
+      const { data } = await api.get<{ rates: ExchangeRates }>('/api/exchange-rates')
+      return data.rates
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 3,
+  })
+}
+
+export function useConvertCurrency() {
+  return useMutation({
+    mutationFn: async (request: ConversionRequest) => {
+      const { data } = await api.post<ConversionResult>('/api/convert', request)
+      return data
+    },
+  })
+}
+
+// Legacy hook for backward compatibility
 export function useCurrencyConverter() {
-  const [rates, setRates] = useState<ExchangeRates | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetchExchangeRates()
-  }, [])
-
-  const fetchExchangeRates = async () => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const response = await fetch('/api/exchange-rates', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch exchange rates')
-      }
-
-      const data = await response.json()
-      setRates(data.rates)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-      console.error('Error fetching exchange rates:', err)
-      
-      // Fallback to mock data
-      setRates({
-        USD_EUR: { rate: '0.851', updated_at: new Date().toISOString() },
-        EUR_USD: { rate: '1.175', updated_at: new Date().toISOString() },
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { data: rates, isLoading: loading, error, refetch } = useExchangeRates()
+  const convertMutation = useConvertCurrency()
 
   const convertCurrency = async (amount: string, fromCurrency: string, toCurrency: string): Promise<ConversionResult> => {
     try {
-      const response = await fetch('/api/convert', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({
-          amount,
-          from_currency: fromCurrency,
-          to_currency: toCurrency,
-        }),
+      return await convertMutation.mutateAsync({
+        amount,
+        from_currency: fromCurrency,
+        to_currency: toCurrency,
       })
-
-      if (!response.ok) {
-        throw new Error('Failed to convert currency')
-      }
-
-      return await response.json()
     } catch (err) {
       console.error('Error converting currency:', err)
       
@@ -100,6 +101,6 @@ export function useCurrencyConverter() {
     loading,
     error,
     convertCurrency,
-    refreshRates: fetchExchangeRates,
+    refreshRates: refetch,
   }
 }
