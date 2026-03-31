@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CheckCircle, AlertCircle, Clock, FileText } from 'lucide-react'
 import { useTheme } from '@/contexts/theme-context'
+import { useReconcileTransaction } from '@/hooks/useReconciliationMutation'
 
 interface ReconciliationEntry {
   id: string
@@ -23,7 +24,9 @@ interface ReconciliationEntry {
 export default function ReconciliationPage() {
   const { theme } = useTheme()
   const [reconciliationHistory, setReconciliationHistory] = useState<ReconciliationEntry[]>([])
-  const [loading, setLoading] = useState(false)
+
+  // TanStack Query hooks
+  const reconcileMutation = useReconcileTransaction()
 
   // Mock data - replace with real API calls
   const mockHistory: ReconciliationEntry[] = [
@@ -35,7 +38,7 @@ export default function ReconciliationPage() {
       variance: '0.00',
       variance_percent: '0.00',
       status: 'matched',
-      reconciled_at: new Date().toISOString(),
+      reconciled_at: new Date(Date.now() - 3600000).toISOString(),
       notes: 'Perfect match'
     },
     {
@@ -46,39 +49,31 @@ export default function ReconciliationPage() {
       variance: '-1.25',
       variance_percent: '-0.50',
       status: 'matched',
-      reconciled_at: new Date(Date.now() - 3600000).toISOString(),
+      reconciled_at: new Date(Date.now() - 7200000).toISOString(),
       notes: 'Within tolerance'
     },
     {
       id: 'rec_3',
       transaction_id: 'tx_ghi789',
       expected_amount: '500.00',
-      actual_amount: '480.00',
-      variance: '-20.00',
-      variance_percent: '-4.00',
+      actual_amount: '515.00',
+      variance: '15.00',
+      variance_percent: '3.00',
       status: 'mismatch',
-      reconciled_at: new Date(Date.now() - 7200000).toISOString(),
+      reconciled_at: new Date(Date.now() - 10800000).toISOString(),
       notes: 'Significant variance detected'
     },
   ]
 
   const handleReconcile = async (data: any) => {
-    setLoading(true)
     try {
-      const response = await fetch('/api/reconcile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(data),
+      const result = await reconcileMutation.mutateAsync({
+        transaction_id: data.transaction_id,
+        expected_amount: data.expected_amount,
+        actual_amount: data.actual_amount,
+        tolerance: data.tolerance,
+        notes: data.notes,
       })
-
-      if (!response.ok) {
-        throw new Error('Failed to reconcile transaction')
-      }
-
-      const result = await response.json()
       
       // Add to history
       const newEntry: ReconciliationEntry = {
@@ -104,8 +99,6 @@ export default function ReconciliationPage() {
       }
       
       setReconciliationHistory(prev => [mockEntry, ...prev.slice(0, 9)])
-    } finally {
-      setLoading(false)
     }
   }
 
