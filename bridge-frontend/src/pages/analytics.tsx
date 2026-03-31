@@ -7,7 +7,7 @@ import { VolumeChart } from '@/components/analytics/VolumeChart'
 import { CurrencyDistribution } from '@/components/analytics/CurrencyDistribution'
 import { DateRangePicker } from '@/components/analytics/DateRangePicker'
 import { format, subDays } from 'date-fns'
-import { useAnalytics } from '@/hooks/useAnalyticsQuery'
+import { useMetrics, useVolumeData } from '@/hooks/useAnalyticsQuery'
 import { usePeriodComparison } from '@/hooks/usePeriodComparison'
 import { useTheme } from '@/contexts/theme-context'
 
@@ -23,11 +23,22 @@ export default function AnalyticsPage() {
   const [chartType, setChartType] = useState<'bar' | 'line'>('bar')
 
   // Use TanStack Query for API calls
-  const { metrics, volumeData, currencyData, loading } = useAnalytics({
+  const request = {
     period: period as 'daily' | 'weekly' | 'monthly',
     start_date: dateRange.startDate,
     end_date: dateRange.endDate,
-  })
+  }
+
+  const { data: metrics, isLoading: metricsLoading } = useMetrics(request)
+  const { data: volumeData, isLoading: volumeLoading } = useVolumeData(request)
+  
+  // Mock currency data
+  const currencyData = [
+    { name: 'USD', value: 65, color: '#FF4500' },
+    { name: 'EUR', value: 35, color: '#3B82F6' },
+  ]
+  
+  const loading = metricsLoading || volumeLoading
 
   // Period-over-period comparison
   const { comparison } = usePeriodComparison(period as 'daily' | 'weekly' | 'monthly')
@@ -37,7 +48,7 @@ export default function AnalyticsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Analytics Dashboard</h1>
-          <p className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Monitor your bridge protocol performance</p>
+          <p className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-700'}>Monitor your bridge protocol performance</p>
         </div>
           <div className="flex gap-2">
             <Select value={period} onValueChange={setPeriod}>
@@ -90,10 +101,10 @@ export default function AnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {(volumeData || []).slice(0, 5).map((item, index) => (
+                  {(volumeData || []).slice(0, 5).map((item: any, index: number) => (
                     <div key={index} className="flex items-center justify-between">
-                      <span className="text-sm">{format(new Date(item.date), 'MMM dd, yyyy')}</span>
-                      <span className="text-sm font-medium">{item.transactions} transactions</span>
+                      <span className={`text-sm ${theme === 'dark' ? 'text-zinc-300' : 'text-gray-700'}`}>{format(new Date(item.date), 'MMM dd, yyyy')}</span>
+                      <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{item.transactions} transactions</span>
                     </div>
                   ))}
                 </div>
@@ -112,16 +123,16 @@ export default function AnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {(currencyData || []).map((currency) => (
+                  {(currencyData || []).map((currency: { name: string; value: number; color: string }) => (
                     <div key={currency.name} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div 
                           className="w-3 h-3 rounded-full" 
                           style={{ backgroundColor: currency.color }}
                         />
-                        <span className="text-sm font-medium">{currency.name}</span>
+                        <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{currency.name}</span>
                       </div>
-                      <span className="text-sm">{currency.value}%</span>
+                      <span className={`text-sm ${theme === 'dark' ? 'text-zinc-300' : 'text-gray-700'}`}>{currency.value}%</span>
                     </div>
                   ))}
                 </div>

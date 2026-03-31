@@ -68,7 +68,7 @@ export default function ConverterPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Currency Converter</h1>
-          <p className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Real-time USD/EUR conversion</p>
+          <p className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-700'}>Real-time USD/EUR conversion</p>
         </div>
           <Button
             variant="outline"
@@ -117,7 +117,7 @@ export default function ConverterPage() {
                   </div>
                   <div className="text-right">
                     <div className="text-sm text-muted-foreground">
-                      {new Date().toLocaleTimeString()}
+                      <span className={theme === 'dark' ? 'text-zinc-300' : 'text-gray-700'}>{new Date().toLocaleTimeString()}</span>
                     </div>
                   </div>
                 </div>

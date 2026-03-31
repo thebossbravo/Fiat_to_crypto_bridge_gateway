@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTheme } from '@/contexts/theme-context'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -23,6 +24,7 @@ interface AmountConverterProps {
 }
 
 export function AmountConverter({ onConvert, loading, result, exchangeRates }: AmountConverterProps) {
+  const { theme } = useTheme()
   const [amount, setAmount] = useState('')
   const [fromCurrency, setFromCurrency] = useState('USD')
   const [toCurrency, setToCurrency] = useState('EUR')
@@ -168,12 +170,12 @@ export function AmountConverter({ onConvert, loading, result, exchangeRates }: A
 
           {/* Result Display */}
           {result && (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className={`p-4 ${theme === 'dark' ? 'bg-green-900/30 border-green-700/50' : 'bg-green-50 border-green-200'} rounded-lg`}>
               <div className="text-center space-y-2">
-                <div className="text-2xl font-bold text-green-800">
+                <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-800'}`}>
                   {result.originalAmount} {result.originalCurrency} = {result.convertedAmount} {result.convertedCurrency}
                 </div>
-                <div className="text-sm text-green-600">
+                <div className={`text-sm ${theme === 'dark' ? 'text-green-300' : 'text-green-600'}`}>
                   Rate: {result.rate}
                 </div>
               </div>

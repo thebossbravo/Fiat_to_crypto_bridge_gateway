@@ -39,13 +39,13 @@ export function Dashboard({ walletAddress, balance, transactions, loading, user,
   const getStatusColor = (state: string) => {
     switch (state) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return theme === 'dark' ? 'bg-green-900/30 text-green-400 border-green-700/50' : 'bg-green-100 text-green-800 border-green-200';
       case 'failed':
-        return 'bg-red-100 text-red-800';
+        return theme === 'dark' ? 'bg-red-900/30 text-red-400 border-red-700/50' : 'bg-red-100 text-red-800 border-red-200';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return theme === 'dark' ? 'bg-yellow-900/30 text-yellow-400 border-yellow-700/50' : 'bg-yellow-100 text-yellow-800 border-yellow-200';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return theme === 'dark' ? 'bg-gray-800 text-gray-400 border-gray-700' : 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -65,7 +65,7 @@ export function Dashboard({ walletAddress, balance, transactions, loading, user,
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className={`text-3xl font-bold font-manrope ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Dashboard</h1>
-          <p className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Manage your bridge transactions and wallet</p>
+          <p className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-700'}>Manage your bridge transactions and wallet</p>
         </div>
         <Button 
           onClick={() => setIsPaymentDialogOpen(true)}
@@ -89,20 +89,20 @@ export function Dashboard({ walletAddress, balance, transactions, loading, user,
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm mb-1 ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-500'}`}>Wallet Address</p>
+                  <p className={`text-sm mb-1 ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}`}>Wallet Address</p>
                   <p className={`text-lg font-mono font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className={`text-sm mb-1 ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-500'}`}>Balance</p>
+                  <p className={`text-sm mb-1 ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}`}>Balance</p>
                   <p className="text-2xl font-bold text-[#FF4500]">{balance} USDC</p>
                 </div>
               </div>
               <Separator className={`my-4 ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
               <Button 
                 variant="outline" 
-                className={theme === 'dark' ? 'w-full border-white/20 text-zinc-300 hover:bg-white/5' : 'w-full border-gray-300 text-gray-700 hover:bg-gray-50'}
+                className={theme === 'dark' ? 'w-full border-white/20 text-zinc-300 hover:bg-white/5' : 'w-full border-gray-300 text-gray-800 hover:bg-gray-50'}
                 onClick={() => copyToClipboard(walletAddress)}
               >
                 <Copy className="w-4 h-4 mr-2" />
@@ -120,11 +120,11 @@ export function Dashboard({ walletAddress, balance, transactions, loading, user,
               </CardHeader>
               <CardContent>
               {loading ? (
-                <div className={`text-center py-8 ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-500'}`}>
+                <div className={`text-center py-8 ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}`}>
                   Loading transactions...
                 </div>
               ) : transactions.length === 0 ? (
-                <div className={`text-center py-8 ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-500'}`}>
+                <div className={`text-center py-8 ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}`}>
                   No transactions yet
                 </div>
                 ) : (
@@ -136,12 +136,12 @@ export function Dashboard({ walletAddress, balance, transactions, loading, user,
                           <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                             ${(tx.fiat_amount_cents / 100).toFixed(2)}
                           </span>
-                            <Badge className={getStatusColor(tx.state)}>
+                            <Badge className={`${getStatusColor(tx.state)} border`}>
                               {getStatusIcon(tx.state)}
                               {tx.state}
                             </Badge>
                           </div>
-                        <div className={`text-sm ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-500'}`}>
+                        <div className={`text-sm ${theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}`}>
                           {new Date(tx.created_at).toLocaleDateString()} at {new Date(tx.created_at).toLocaleTimeString()}
                         </div>
                       </div>

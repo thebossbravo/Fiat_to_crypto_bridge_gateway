@@ -105,25 +105,25 @@ export default function ReconciliationPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'matched':
-        return <CheckCircle className="w-4 h-4 text-green-600" />
+        return <CheckCircle className={`w-4 h-4 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
       case 'mismatch':
-        return <AlertCircle className="w-4 h-4 text-red-600" />
+        return <AlertCircle className={`w-4 h-4 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`} />
       case 'missing':
-        return <Clock className="w-4 h-4 text-yellow-600" />
+        return <Clock className={`w-4 h-4 ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`} />
       default:
-        return <Clock className="w-4 h-4 text-gray-600" />
+        return <Clock className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
     }
   }
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      matched: 'bg-green-100 text-green-800',
-      mismatch: 'bg-red-100 text-red-800',
-      missing: 'bg-yellow-100 text-yellow-800',
+      matched: theme === 'dark' ? 'bg-green-900/30 text-green-400 border-green-700/50' : 'bg-green-100 text-green-800 border-green-200',
+      mismatch: theme === 'dark' ? 'bg-red-900/30 text-red-400 border-red-700/50' : 'bg-red-100 text-red-800 border-red-200',
+      missing: theme === 'dark' ? 'bg-yellow-900/30 text-yellow-400 border-yellow-700/50' : 'bg-yellow-100 text-yellow-800 border-yellow-200',
     }
     
     return (
-      <Badge className={variants[status as keyof typeof variants] || 'bg-gray-100 text-gray-800'}>
+      <Badge className={`${variants[status as keyof typeof variants] || (theme === 'dark' ? 'bg-gray-800 text-gray-400 border-gray-700' : 'bg-gray-100 text-gray-800 border-gray-200')} border`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     )
@@ -168,10 +168,10 @@ export default function ReconciliationPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Matched</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600" />
+            <CheckCircle className={`h-4 w-4 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.matched}</div>
+            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>{stats.matched}</div>
             <p className="text-xs text-muted-foreground">
               {stats.total > 0 ? ((stats.matched / stats.total) * 100).toFixed(1) : 0}% success rate
             </p>
@@ -181,10 +181,10 @@ export default function ReconciliationPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Mismatches</CardTitle>
-            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertCircle className={`h-4 w-4 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`} />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.mismatched}</div>
+            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>{stats.mismatched}</div>
             <p className="text-xs text-muted-foreground">
               {stats.total > 0 ? ((stats.mismatched / stats.total) * 100).toFixed(1) : 0}% need attention
             </p>
@@ -194,10 +194,10 @@ export default function ReconciliationPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Missing</CardTitle>
-            <Clock className="h-4 w-4 text-yellow-600" />
+            <Clock className={`h-4 w-4 ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`} />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.missing}</div>
+            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`}>{stats.missing}</div>
             <p className="text-xs text-muted-foreground">
               {stats.total > 0 ? ((stats.missing / stats.total) * 100).toFixed(1) : 0}% unresolved
             </p>
@@ -244,7 +244,7 @@ export default function ReconciliationPage() {
                       <TableCell>${entry.expected_amount}</TableCell>
                       <TableCell>${entry.actual_amount}</TableCell>
                       <TableCell>
-                        <span className={parseFloat(entry.variance) < 0 ? 'text-red-600' : 'text-green-600'}>
+                        <span className={parseFloat(entry.variance) < 0 ? (theme === 'dark' ? 'text-red-400' : 'text-red-600') : (theme === 'dark' ? 'text-green-400' : 'text-green-600')}>
                           ${entry.variance} ({entry.variance_percent}%)
                         </span>
                       </TableCell>

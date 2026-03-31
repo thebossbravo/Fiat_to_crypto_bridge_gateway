@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTheme } from '@/contexts/theme-context'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -37,6 +38,7 @@ interface ReconciliationData {
 }
 
 export function ReconciliationForm({ onReconcile, loading, result }: ReconciliationFormProps) {
+  const { theme } = useTheme()
   const [formData, setFormData] = useState<ReconciliationData>({
     transaction_id: '',
     expected_amount: '',
@@ -70,26 +72,26 @@ export function ReconciliationForm({ onReconcile, loading, result }: Reconciliat
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'matched':
-        return <CheckCircle className="w-4 h-4 text-green-600" />
+        return <CheckCircle className={`w-4 h-4 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
       case 'mismatch':
-        return <AlertCircle className="w-4 h-4 text-red-600" />
+        return <AlertCircle className={`w-4 h-4 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`} />
       case 'missing':
-        return <Clock className="w-4 h-4 text-yellow-600" />
+        return <Clock className={`w-4 h-4 ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`} />
       default:
-        return <Clock className="w-4 h-4 text-gray-600" />
+        return <Clock className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
     }
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'matched':
-        return 'bg-green-100 text-green-800'
+        return theme === 'dark' ? 'bg-green-900/30 text-green-400 border-green-700/50' : 'bg-green-100 text-green-800 border-green-200'
       case 'mismatch':
-        return 'bg-red-100 text-red-800'
+        return theme === 'dark' ? 'bg-red-900/30 text-red-400 border-red-700/50' : 'bg-red-100 text-red-800 border-red-200'
       case 'missing':
-        return 'bg-yellow-100 text-yellow-800'
+        return theme === 'dark' ? 'bg-yellow-900/30 text-yellow-400 border-yellow-700/50' : 'bg-yellow-100 text-yellow-800 border-yellow-200'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return theme === 'dark' ? 'bg-gray-800 text-gray-400 border-gray-700' : 'bg-gray-100 text-gray-800 border-gray-200'
     }
   }
 
@@ -100,17 +102,15 @@ export function ReconciliationForm({ onReconcile, loading, result }: Reconciliat
         <CardDescription>Match expected vs actual transaction amounts</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Quick Fill Button */}
+  
         <div className="flex justify-end">
           <Button variant="outline" size="sm" onClick={handleQuickFill}>
             Quick Fill Test Data
           </Button>
         </div>
 
-        {/* Reconciliation Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            {/* Transaction ID */}
             <div className="space-y-2">
               <Label htmlFor="transaction_id">Transaction ID *</Label>
               <Input
@@ -122,7 +122,6 @@ export function ReconciliationForm({ onReconcile, loading, result }: Reconciliat
               />
             </div>
 
-            {/* Currency */}
             <div className="space-y-2">
               <Label htmlFor="currency">Currency *</Label>
               <Select value={formData.currency} onValueChange={(value) => handleInputChange('currency', value)}>
@@ -136,7 +135,6 @@ export function ReconciliationForm({ onReconcile, loading, result }: Reconciliat
               </Select>
             </div>
 
-            {/* Expected Amount */}
             <div className="space-y-2">
               <Label htmlFor="expected_amount">Expected Amount *</Label>
               <Input
@@ -150,7 +148,6 @@ export function ReconciliationForm({ onReconcile, loading, result }: Reconciliat
               />
             </div>
 
-            {/* Actual Amount */}
             <div className="space-y-2">
               <Label htmlFor="actual_amount">Actual Amount *</Label>
               <Input
@@ -164,7 +161,6 @@ export function ReconciliationForm({ onReconcile, loading, result }: Reconciliat
               />
             </div>
 
-            {/* Tolerance */}
             <div className="space-y-2">
               <Label htmlFor="tolerance">Tolerance (%)</Label>
               <Input
@@ -176,8 +172,6 @@ export function ReconciliationForm({ onReconcile, loading, result }: Reconciliat
                 onChange={(e) => handleInputChange('tolerance', e.target.value)}
               />
             </div>
-
-            {/* Notes */}
             <div className="space-y-2 col-span-2">
               <Label htmlFor="notes">Notes</Label>
               <Textarea
@@ -190,7 +184,6 @@ export function ReconciliationForm({ onReconcile, loading, result }: Reconciliat
             </div>
           </div>
 
-          {/* Submit Button */}
           <Button
             type="submit"
             disabled={loading || !formData.transaction_id || !formData.expected_amount || !formData.actual_amount}
@@ -199,14 +192,11 @@ export function ReconciliationForm({ onReconcile, loading, result }: Reconciliat
             {loading ? 'Reconciling...' : 'Reconcile Transaction'}
           </Button>
         </form>
-
-        {/* Results */}
         {result && (
           <div className="space-y-4">
             <div className="border-t pt-4">
               <h3 className="text-lg font-medium mb-3">Reconciliation Result</h3>
-              
-              {/* Status Badge */}
+     
               <div className="flex items-center gap-2 mb-4">
                 {getStatusIcon(result.entry.status)}
                 <Badge className={getStatusColor(result.entry.status)}>
@@ -214,7 +204,6 @@ export function ReconciliationForm({ onReconcile, loading, result }: Reconciliat
                 </Badge>
               </div>
 
-              {/* Result Details */}
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-muted-foreground">Transaction ID:</span>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useTheme } from '@/contexts/theme-context';
 import { LoginForm } from '../components/login-form';
 import { SignupForm } from '../components/signup-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,7 @@ type AuthMode = 'login' | 'signup';
 export default function LoginPage() {
   const [mode, setMode] = useState<AuthMode>('login');
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const handleLogin = async (email: string, password: string) => {
     try {
@@ -41,15 +43,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-black text-white' : 'bg-white text-gray-900'} flex items-center justify-center p-6`}>
       <div className="w-full max-w-md">
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className={theme === 'dark' ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-gray-200'}>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-white flex items-center justify-center gap-2">
+            <CardTitle className={`text-2xl font-bold flex items-center justify-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               <div className="w-8 h-8 bg-[#FF4500] rounded-sm rotate-45"></div>
               Bridge Protocol
             </CardTitle>
-            <CardDescription className="text-zinc-400">
+            <CardDescription className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>
               {mode === 'login' ? 'Sign in to your account' : 'Create your account'}
             </CardDescription>
           </CardHeader>
@@ -70,17 +72,17 @@ export default function LoginPage() {
               <div className="text-center">
                 <Button
                   variant="ghost"
-                  className="text-zinc-400 hover:text-white"
+                  className={theme === 'dark' ? 'text-zinc-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
                   onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  {mode === 'login' ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+                  {mode === 'login' ? 'Need an account?' : 'Have an account?'}
                 </Button>
               </div>
               <div className="text-center">
                 <Button
                   variant="ghost"
-                  className="text-zinc-400 hover:text-white"
+                  className={theme === 'dark' ? 'text-zinc-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
                   onClick={() => navigate('/')}
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
