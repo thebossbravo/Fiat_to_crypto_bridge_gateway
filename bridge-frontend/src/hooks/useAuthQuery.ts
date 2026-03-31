@@ -1,19 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
-
-// API base configuration
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
-})
-
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+import { api } from '@/lib/api'
 
 // Types
 interface LoginRequest {
@@ -52,8 +38,7 @@ export function useLogin() {
   
   return useMutation({
     mutationFn: async (credentials: LoginRequest): Promise<AuthResponse> => {
-      const { data } = await api.post('/auth/login', credentials)
-      return data
+      return api.post<AuthResponse>('/auth/login', credentials)
     },
     onSuccess: (data) => {
       // Store token
@@ -69,8 +54,7 @@ export function useRegister() {
   
   return useMutation({
     mutationFn: async (userData: RegisterRequest): Promise<AuthResponse> => {
-      const { data } = await api.post('/auth/register', userData)
-      return data
+      return api.post<AuthResponse>('/auth/register', userData)
     },
     onSuccess: (data) => {
       // Store token
@@ -101,8 +85,7 @@ export function useUserProfile() {
   return useQuery({
     queryKey: ['user-profile'],
     queryFn: async (): Promise<UserProfile> => {
-      const { data } = await api.get('/auth/user')
-      return data
+      return api.get<UserProfile>('/auth/user')
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 1,
@@ -115,8 +98,7 @@ export function useGoogleAuth() {
   
   return useMutation({
     mutationFn: async (googleToken: string): Promise<AuthResponse> => {
-      const { data } = await api.post('/auth/google', { token: googleToken })
-      return data
+      return api.post<AuthResponse>('/auth/google', { token: googleToken })
     },
     onSuccess: (data) => {
       // Store token

@@ -1,19 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
-
-// API base configuration
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
-})
-
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+import { api } from '@/lib/api'
 
 // Types matching backend Go structs
 interface FinancialMetrics {
@@ -54,8 +40,7 @@ export function useMetrics(request: MetricsRequest) {
   return useQuery({
     queryKey: ['metrics', request],
     queryFn: async (): Promise<MetricsResponse> => {
-      const { data } = await api.post('/api/metrics', request)
-      return data
+      return api.post<MetricsResponse>('/api/metrics', request)
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 3,

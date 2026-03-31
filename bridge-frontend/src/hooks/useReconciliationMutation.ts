@@ -1,21 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import axios from 'axios'
-
-// API base URL
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
-
-// Axios instance with auth
-const api = axios.create({
-  baseURL: API_URL,
-})
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+import { api } from '@/lib/api'
 
 interface ReconciliationRequest {
   transaction_id: string
@@ -46,8 +30,7 @@ interface ReconciliationResponse {
 export function useReconcileTransaction() {
   return useMutation({
     mutationFn: async (request: ReconciliationRequest) => {
-      const { data } = await api.post('/api/reconcile', request)
-      return data as ReconciliationResponse
+      return api.post<ReconciliationResponse>('/api/reconcile', request)
     },
   })
 }

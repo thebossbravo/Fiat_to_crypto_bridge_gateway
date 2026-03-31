@@ -1,19 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
-
-// API base configuration
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
-})
-
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+import { api } from '@/lib/api'
 
 // Types
 interface ReconciliationRequest {
@@ -47,8 +33,7 @@ export function useReconcileTransaction() {
   
   return useMutation({
     mutationFn: async (request: ReconciliationRequest): Promise<ReconciliationResponse> => {
-      const { data } = await api.post('/api/reconcile', request)
-      return data
+      return api.post<ReconciliationResponse>('/api/reconcile', request)
     },
     onSuccess: () => {
       // Invalidate reconciliation history cache

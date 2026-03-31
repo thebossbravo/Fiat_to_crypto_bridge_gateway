@@ -1,19 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
-
-// API base configuration
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
-})
-
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+import { api } from '@/lib/api'
 
 // Types
 interface ExchangeRates {
@@ -41,8 +27,7 @@ export function useExchangeRates() {
   return useQuery({
     queryKey: ['exchange-rates'],
     queryFn: async (): Promise<{ rates: ExchangeRates }> => {
-      const { data } = await api.get('/api/exchange-rates')
-      return data
+      return api.get<{ rates: ExchangeRates }>('/api/exchange-rates')
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
     retry: 3,
@@ -54,8 +39,7 @@ export function useConvertCurrency() {
   
   return useMutation({
     mutationFn: async (request: ConvertRequest): Promise<ConvertResponse> => {
-      const { data } = await api.post('/api/convert', request)
-      return data
+      return api.post<ConvertResponse>('/api/convert', request)
     },
     onSuccess: () => {
       // Invalidate exchange rates cache after conversion

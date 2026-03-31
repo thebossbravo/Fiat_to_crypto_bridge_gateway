@@ -1,21 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
-
-// API base URL
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
-
-// Axios instance with auth
-const api = axios.create({
-  baseURL: API_URL,
-})
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+import { api } from '@/lib/api'
 
 interface FinancialMetrics {
   total_volume: string
@@ -53,14 +37,12 @@ export function useAnalytics({ period, start_date, end_date }: AnalyticsRequest)
   return useQuery({
     queryKey: ['analytics', period, start_date, end_date],
     queryFn: async () => {
-      // Fetch metrics from API
-      const { data: metricsData } = await api.post<MetricsResponse>('/api/metrics', {
+      const metricsData = await api.post<MetricsResponse>('/api/metrics', {
         period,
         start_date,
         end_date,
       })
 
-      // Mock volume and currency data for now (replace with real API calls)
       const volumeData: VolumeData[] = [
         { date: '2024-01-01', volume: 12500, transactions: 45 },
         { date: '2024-01-02', volume: 18900, transactions: 67 },
@@ -82,7 +64,7 @@ export function useAnalytics({ period, start_date, end_date }: AnalyticsRequest)
         currencyData,
       }
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
     retry: 3,
   })
 }

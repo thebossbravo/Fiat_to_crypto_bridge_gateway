@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/lib/api';
 
 interface Transaction {
   id: string;
@@ -15,34 +15,19 @@ interface TransactionsResponse {
   total: number;
 }
 
-// Configure axios instance
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
 // Fetch transactions
 const fetchTransactions = async (): Promise<TransactionsResponse> => {
-  const response = await api.get('/api/transactions');
-  return response.data;
+  return api.get<TransactionsResponse>('/api/transactions');
 };
 
+interface WalletInfo {
+  address: string;
+  balance: string;
+}
+
 // Fetch wallet info
-const fetchWalletInfo = async () => {
-  const response = await api.get('/api/wallet');
-  return response.data;
+const fetchWalletInfo = async (): Promise<WalletInfo> => {
+  return api.get<WalletInfo>('/api/wallet');
 };
 
 // Hook for transactions
@@ -67,12 +52,17 @@ export function useWallet() {
   });
 }
 
+interface CreateTransactionResponse {
+  transaction_id: string;
+  status: string;
+}
+
 // Hook for creating transaction
 export function useCreateTransaction() {
   const queryClient = useQueryClient();
 
-  return async (amountCents: number, currency: string = 'USD') => {
-    const response = await api.post('/api/transactions', {
+  return async (amountCents: number, currency: string = 'USD'): Promise<CreateTransactionResponse> => {
+    const response = await api.post<CreateTransactionResponse>('/api/transactions', {
       amount_cents: amountCents,
       currency,
     });
@@ -80,7 +70,7 @@ export function useCreateTransaction() {
     // Invalidate transactions query to refetch
     queryClient.invalidateQueries({ queryKey: ['transactions'] });
 
-    return response.data;
+    return response;
   };
 }
 
@@ -95,9 +85,8 @@ export function useInitiateSwap() {
     queryClient.invalidateQueries({ queryKey: ['transactions'] });
     queryClient.invalidateQueries({ queryKey: ['wallet'] });
 
-    return response.data;
+    return response;
   };
 }
 
-export { api };
 export type { Transaction, TransactionsResponse };
