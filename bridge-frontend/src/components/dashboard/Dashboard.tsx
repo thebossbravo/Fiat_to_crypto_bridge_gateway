@@ -1,17 +1,10 @@
 import { useState } from 'react';
-import { useTransactions, useWallet } from '@/hooks/useTransactions';
 import { useTheme } from '@/contexts/theme-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Copy, ArrowUpRight, ArrowDownRight, Wallet, Plus, Sun, Moon } from "lucide-react";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { AppSidebar } from '../app-sidebar';
+import { Copy, ArrowUpRight, ArrowDownRight, Wallet, Plus } from "lucide-react";
 import { PaymentDialog } from './PaymentDialog';
 
 interface Transaction {
@@ -37,7 +30,7 @@ interface DashboardProps {
 
 export function Dashboard({ walletAddress, balance, transactions, loading, user, onLogout }: DashboardProps) {
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -68,36 +61,20 @@ export function Dashboard({ walletAddress, balance, transactions, loading, user,
   };
 
   return (
-    <SidebarProvider>
-      <AppSidebar side="left" />
-      <SidebarInset className={theme === 'dark' ? 'bg-black' : 'bg-white'}>
-        <header className={`flex h-14 shrink-0 items-center gap-2 border-b px-4 ${theme === 'dark' ? 'border-white/10' : 'border-gray-200'}`}>
-          <SidebarTrigger className={theme === 'dark' ? 'text-white hover:bg-white/10' : 'text-gray-900 hover:bg-gray-100'} />
-          <Separator orientation="vertical" className={`mr-2 h-4 ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
-          <h1 className={`text-lg font-semibold font-manrope ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Dashboard</h1>
-          <div className="ml-auto flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleTheme}
-              className={theme === 'dark' ? 'border-white/20 text-white hover:bg-white/10' : 'border-gray-300 text-gray-900 hover:bg-gray-100'}
-            >
-              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </Button>
-            <Button 
-              onClick={() => setIsPaymentDialogOpen(true)}
-              className="bg-[#FF4500] hover:bg-[#FF6B35] text-white"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              New Payment
-            </Button>
-          </div>
-        </header>
-
-        <div className="flex-1 overflow-auto p-6">
-          <div className="mb-6">
-            <p className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Manage your bridge transactions and wallet</p>
-          </div>
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className={`text-3xl font-bold font-manrope ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Dashboard</h1>
+          <p className={theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'}>Manage your bridge transactions and wallet</p>
+        </div>
+        <Button 
+          onClick={() => setIsPaymentDialogOpen(true)}
+          className="bg-[#FF4500] hover:bg-[#FF6B35] text-white"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          New Payment
+        </Button>
+      </div>
 
           <Card className={theme === 'dark' ? 'bg-black/60 backdrop-blur-xl border-white/10 mb-8' : 'bg-white border-gray-200 shadow-sm mb-8'}>
               <CardHeader>
@@ -189,13 +166,10 @@ export function Dashboard({ walletAddress, balance, transactions, loading, user,
                 )}
               </CardContent>
             </Card>
-        </div>
-
-        <PaymentDialog 
-          open={isPaymentDialogOpen}
-          onOpenChange={setIsPaymentDialogOpen}
-        />
-      </SidebarInset>
-    </SidebarProvider>
+      <PaymentDialog 
+        open={isPaymentDialogOpen}
+        onOpenChange={setIsPaymentDialogOpen}
+      />
+    </div>
   );
 }
