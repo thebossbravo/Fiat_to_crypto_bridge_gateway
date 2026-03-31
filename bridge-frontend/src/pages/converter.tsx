@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { AmountConverter } from '@/components/converter/AmountConverter'
 import { ExchangeRateDisplay } from '@/components/converter/ExchangeRateDisplay'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { RefreshCw } from 'lucide-react'
 import { useTheme } from '@/contexts/theme-context'
+import { useExchangeRates, useConvertCurrency } from '@/hooks/useExchangeRatesQuery'
 
 interface ConversionResult {
   originalAmount: string
@@ -21,65 +22,21 @@ interface ExchangeRates {
 
 export default function ConverterPage() {
   const { theme } = useTheme()
-  const [rates, setRates] = useState<ExchangeRates>()
-  const [loading, setLoading] = useState(false)
   const [conversionResult, setConversionResult] = useState<ConversionResult>()
-  const [converting, setConverting] = useState(false)
   const [conversionHistory, setConversionHistory] = useState<ConversionResult[]>([])
 
-  // Mock data - replace with real API calls
-  useEffect(() => {
-    fetchExchangeRates()
-  }, [])
-
-  const fetchExchangeRates = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('/api/exchange-rates', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch exchange rates')
-      }
-
-      const data = await response.json()
-      setRates(data.rates)
-    } catch (error) {
-      console.error('Error fetching exchange rates:', error)
-      // Fallback to mock data
-      setRates({
-        USD_EUR: { rate: '0.851', updated_at: new Date().toISOString() },
-        EUR_USD: { rate: '1.175', updated_at: new Date().toISOString() },
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
+  // TanStack Query hooks
+  const { data: rates, isLoading: loading, refetch: refetchExchangeRates } = useExchangeRates()
+  const convertMutation = useConvertCurrency()
 
   const handleConvert = async (amount: string, fromCurrency: string, toCurrency: string) => {
-    setConverting(true)
     try {
-      const response = await fetch('/api/convert', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({
-          amount,
-          from_currency: fromCurrency,
-          to_currency: toCurrency,
-        }),
+      const result = await convertMutation.mutateAsync({
+        amount,
+        from_currency: fromCurrency,
+        to_currency: toCurrency,
       })
-
-      if (!response.ok) {
-        throw new Error('Failed to convert currency')
-      }
-
-      const result: ConversionResult = await response.json()
+      
       setConversionResult(result)
       
       // Add to history (keep last 10 conversions)
@@ -103,8 +60,6 @@ export default function ConverterPage() {
         setConversionResult(fallbackResult)
         setConversionHistory(prev => [fallbackResult, ...prev.slice(0, 9)])
       }
-    } finally {
-      setConverting(false)
     }
   }
 
@@ -117,7 +72,7 @@ export default function ConverterPage() {
         </div>
           <Button
             variant="outline"
-            onClick={fetchExchangeRates}
+            onClick={() => refetchExchangeRates()}
             disabled={loading}
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
@@ -128,7 +83,7 @@ export default function ConverterPage() {
 
         <AmountConverter
           onConvert={handleConvert}
-          loading={converting}
+          loading={convertMutation.isPending}
           result={conversionResult}
           exchangeRates={rates}
         />
@@ -136,7 +91,7 @@ export default function ConverterPage() {
         <ExchangeRateDisplay
           rates={rates}
           loading={loading}
-          onRefresh={fetchExchangeRates}
+          onRefresh={() => refetchExchangeRates()}
         />
       </div>
       {conversionHistory.length > 0 && (
