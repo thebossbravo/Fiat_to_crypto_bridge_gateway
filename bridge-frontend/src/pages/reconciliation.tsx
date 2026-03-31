@@ -205,7 +205,6 @@ export default function ReconciliationPage() {
         </Card>
       </div>
 
-      {/* Main Content */}
       <Tabs defaultValue="reconcile" className="space-y-4">
         <TabsList>
           <TabsTrigger value="reconcile">Reconcile Transaction</TabsTrigger>
@@ -215,7 +214,7 @@ export default function ReconciliationPage() {
         <TabsContent value="reconcile">
           <ReconciliationForm
             onReconcile={handleReconcile}
-            loading={loading}
+            loading={reconcileMutation.isPending}
           />
         </TabsContent>
 
